@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User, Chrome, Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -18,37 +19,132 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateForm = (): string | null => {
+    if (!email.trim()) {
+      return 'El correo es requerido';
+    }
+    if (!validateEmail(email)) {
+      return 'Ingresa un correo válido';
+    }
+    if (!password.trim()) {
+      return 'La contraseña es requerida';
+    }
+    if (password.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres';
+    }
+    if (mode === 'signup' && !name.trim()) {
+      return 'El nombre es requerido';
+    }
+    return null;
+  };
+
+  const getErrorMessage = (error: any): string => {
+    const message = error?.message || error?.toString() || '';
+    
+    if (message.includes('Invalid login credentials')) {
+      return 'Correo o contraseña incorrectos.';
+    }
+    if (message.includes('Email not confirmed')) {
+      return 'Confirma tu correo antes de entrar.';
+    }
+    if (message.includes('User not found') || message.includes('user not found')) {
+      return 'No existe una cuenta con ese correo.';
+    }
+    if (message.includes('already registered') || message.includes('already exists')) {
+      return 'Este correo ya está registrado. Intenta iniciar sesión.';
+    }
+    if (message.includes('Password should be at least')) {
+      return 'La contraseña debe tener al menos 6 caracteres.';
+    }
+    
+    return 'Algo salió mal. Intenta de nuevo.';
+  };
+
   const handleGoogleSignIn = async () => {
     setLoading(true);
+    setError('');
+    
     try {
-      // Aquí iría la integración real con Supabase
-      // await signInWithGoogle();
-      console.log('Google sign in');
-      onSuccess();
-    } catch (err) {
-      setError('Error al iniciar sesión con Google');
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/aprender`
+        }
+      });
+      
+      if (error) {
+        setError(getErrorMessage(error));
+        return;
+      }
+      
+      // OAuth will redirect, so we don't call onSuccess here
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
+  const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validar formulario antes de enviar
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    
     setLoading(true);
     setError('');
     
     try {
-      // Aquí iría la integración real con Supabase
       if (mode === 'signup') {
-        // await signUpWithEmail(email, password);
-        console.log('Sign up:', email, password, name);
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name: name,
+            }
+          }
+        });
+        
+        if (signUpError) {
+          setError(getErrorMessage(signUpError));
+          return;
+        }
+        
+        if (data.user) {
+          // Check if email confirmation is required
+          if (data.user.identities?.length === 0) {
+            setError('Revisa tu correo para confirmar tu cuenta.');
+            return;
+          }
+          onSuccess();
+        }
       } else {
-        // await signInWithEmail(email, password);
-        console.log('Sign in:', email, password);
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        if (signInError) {
+          setError(getErrorMessage(signInError));
+          return;
+        }
+        
+        if (data.user) {
+          onSuccess();
+        }
       }
-      onSuccess();
-    } catch (err) {
-      setError('Error en la autenticación');
+    } catch (err: any) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -69,7 +165,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 max-w-md w-full border border-gray-700 shadow-2xl"
+          className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 max-w-md w-full border border-gray-700 shadow-2xl relative"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close button */}
@@ -146,7 +242,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           )}
 
           {(mode === 'login' || mode === 'signup') && (
-            <form onSubmit={handleEmailSignIn} className="space-y-4">
+            <form onSubmit={handleEmailAuth} className="space-y-4">
               {mode === 'signup' && (
                 <div>
                   <label className="block text-sm text-gray-400 mb-2">Nombre</label>
@@ -190,6 +286,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                     placeholder="••••••••"
                     className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-orange-500 focus:outline-none text-white placeholder-gray-500"
                     required
+                    minLength={6}
                   />
                 </div>
               </div>
