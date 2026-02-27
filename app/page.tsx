@@ -3,41 +3,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  BookOpen, Trophy, Users, Bitcoin, Sparkles, Heart, Play, ChevronRight, Zap
+  BookOpen, Trophy, Users, Bitcoin, Sparkles, Play, ChevronRight
 } from 'lucide-react';
 import AuthModal from '@/components/AuthModal';
 import { STAGES_CONFIG } from '@/lib/constants';
-
-const features = [
-  {
-    icon: BookOpen,
-    title: 'Aprende Jugando',
-    description: 'Lecciones cortas y divertidas como Duolingo',
-    color: 'text-orange-400',
-    bg: 'bg-orange-400/10',
-  },
-  {
-    icon: Trophy,
-    title: 'Badges Únicos',
-    description: '8 insignias por completar cada etapa',
-    color: 'text-amber-400',
-    bg: 'bg-amber-400/10',
-  },
-  {
-    icon: Users,
-    title: 'Ranking Global',
-    description: 'Compite con la comunidad en tiempo real',
-    color: 'text-purple-400',
-    bg: 'bg-purple-400/10',
-  },
-  {
-    icon: Bitcoin,
-    title: 'Gana $SATI',
-    description: 'Recompensas reales en Bitcoin Testnet4',
-    color: 'text-cyan-400',
-    bg: 'bg-cyan-400/10',
-  },
-];
 
 export default function LandingPage() {
   const [showAuth, setShowAuth] = useState(false);
@@ -45,6 +14,38 @@ export default function LandingPage() {
   const handleStartNow = () => {
     setShowAuth(true);
   };
+
+  // Features verticales con imágenes
+  const features = [
+    {
+      icon: BookOpen,
+      title: 'Aprende Jugando',
+      description: 'Sati te lleva paso a paso por lecciones cortas con ejemplos de la vida real. Practicas en simuladores sin arriesgar un solo satoshi cuando quieras avanzar, el conocimiento ya está en tu cabeza.',
+      image: '/images/lessons/aprende-jugando.png',
+      color: 'orange',
+    },
+    {
+      icon: Trophy,
+      title: 'Badges Únicos',
+      description: 'Cada etapa que dominas te da una insignia que nadie te puede quitar. Son tuyas, las ganaste con conocimiento. Desde tu primer "¿qué es Bitcoin?" hasta convertirte en Liquidity Master.',
+      image: '/images/lessons/badges-unicos.png',
+      color: 'amber',
+    },
+    {
+      icon: Users,
+      title: 'Ranking Global',
+      description: '¿Quién sabe más Bitcoin en México? Aquí se demuestra. Mantén tu racha diaria, saca 100% en los exámenes y escala posiciones en tiempo real contra toda la comunidad.',
+      image: '/images/lessons/ranking-global.png',
+      color: 'purple',
+    },
+    {
+      icon: Bitcoin,
+      title: 'Gana $SATI',
+      description: 'Aprender tiene recompensa real. Al completar cada etapa desbloqueas un cofre con tokens $SATI en la red de Bitcoin. Entre más aprendes, más ganas. Así de simple.',
+      image: '/images/lessons/gana-sati.png',
+      color: 'cyan',
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-800">
@@ -149,7 +150,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Features Section - VERTICAL con Imágenes */}
       <section id="como-funciona" className="py-20 relative">
         <div className="max-w-6xl mx-auto px-6">
           <motion.div
@@ -166,24 +167,65 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-gray-800/50 p-6 rounded-2xl border border-gray-700 hover:border-orange-500/50 transition-all hover:-translate-y-2"
-              >
-                <div className={`w-14 h-14 rounded-xl ${feature.bg} flex items-center justify-center mb-4`}>
-                  <feature.icon className={`w-7 h-7 ${feature.color}`} />
+          {/* Features Verticales */}
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-12"
+            >
+              <div className={`bg-gradient-to-br ${
+                feature.color === 'orange' ? 'from-orange-500/10 to-amber-500/10' :
+                feature.color === 'amber' ? 'from-amber-500/10 to-yellow-500/10' :
+                feature.color === 'purple' ? 'from-purple-500/10 to-pink-500/10' :
+                'from-cyan-500/10 to-blue-500/10'
+              } rounded-3xl border ${
+                feature.color === 'orange' ? 'border-orange-500/30' :
+                feature.color === 'amber' ? 'border-amber-500/30' :
+                feature.color === 'purple' ? 'border-purple-500/30' :
+                'border-cyan-500/30'
+              } overflow-hidden`}>
+                <div className={`flex flex-col ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} items-stretch`}>
+                  {/* Imagen */}
+                  <div className="md:w-1/2 relative">
+                    <div className="aspect-video md:aspect-auto md:h-full bg-gray-800 flex items-center justify-center">
+                      <img 
+                        src={feature.image} 
+                        alt={feature.title} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Contenido */}
+                  <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={`w-14 h-14 rounded-xl ${
+                        feature.color === 'orange' ? 'bg-orange-400/20' :
+                        feature.color === 'amber' ? 'bg-amber-400/20' :
+                        feature.color === 'purple' ? 'bg-purple-400/20' :
+                        'bg-cyan-400/20'
+                      } flex items-center justify-center`}>
+                        <feature.icon className={`w-7 h-7 ${
+                          feature.color === 'orange' ? 'text-orange-400' :
+                          feature.color === 'amber' ? 'text-amber-400' :
+                          feature.color === 'purple' ? 'text-purple-400' :
+                          'text-cyan-400'
+                        }`} />
+                      </div>
+                      <h3 className="text-3xl font-bold">{feature.title}</h3>
+                    </div>
+                    
+                    <p className="text-xl text-gray-300 leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
