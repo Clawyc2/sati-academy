@@ -1,14 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { 
   BookOpen, Trophy, Users, Bitcoin, Sparkles, Play, ChevronRight
 } from 'lucide-react';
+import { useRef } from 'react';
 import AuthModal from '@/components/AuthModal';
 
 export default function LandingPage() {
   const [showAuth, setShowAuth] = useState(false);
+  const timelineRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start end", "end start"]
+  });
 
   const handleStartNow = () => {
     setShowAuth(true);
@@ -229,7 +235,7 @@ export default function LandingPage() {
       </section>
 
       {/* Timeline Section - Tu Camino Bitcoiner */}
-      <section className="py-24 md:py-32 relative bg-gradient-to-b from-transparent via-orange-950/10 to-transparent overflow-hidden">
+      <section ref={timelineRef} className="py-24 md:py-32 relative bg-gradient-to-b from-transparent via-orange-950/10 to-transparent overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -247,12 +253,17 @@ export default function LandingPage() {
 
           {/* Timeline */}
           <div className="relative">
-            {/* Línea vertical central (solo desktop) - con animated gradient */}
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 -translate-x-1/2 rounded-full shadow-lg shadow-orange-500/30" 
+            {/* Línea vertical central que crece con scroll (DETRÁS) - solo desktop */}
+            <motion.div 
+              className="hidden md:block absolute left-1/2 top-0 w-1 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 -translate-x-1/2 rounded-full z-0"
               style={{ 
-                background: 'linear-gradient(to bottom, #f7931a, #ff7b00, #f7931a)' 
+                height: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]),
+                background: 'linear-gradient(to bottom, #f7931a, #ff7b00, #f7931a)'
               }}
             />
+
+            {/* Línea base gris (fondo) */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-gray-700/30 -translate-x-1/2 z-0 rounded-full" />
 
             {/* Etapas */}
             {[
@@ -260,49 +271,49 @@ export default function LandingPage() {
                 id: 1,
                 title: 'Fundamentos',
                 lessons: ['¿Qué es Bitcoin?', '¿Quién es Satoshi Nakamoto?', '¿Por qué Bitcoin y no otra crypto?', '¿Cómo funciona la blockchain?'],
-                badge: { name: 'La Chispa', emoji: '⚡', desc: 'Encendiste tu curiosidad por Bitcoin', image: '/images/Badges/la-chispa.png' }
+                badge: { image: '/images/Badges/la-chispa.png' }
               },
               {
                 id: 2,
                 title: 'Seguridad Primero',
                 lessons: ['¿Qué es la custodia?', 'Self-custody vs exchange', '¿Qué es una frase secreta?', 'Cómo proteger tu frase secreta'],
-                badge: { name: 'Guardián', emoji: '🔐', desc: 'Nadie toca tus sats sin tu permiso', image: '/images/Badges/guardian.png' }
+                badge: { image: '/images/Badges/guardian.png' }
               },
               {
                 id: 3,
                 title: 'Tu Primera Wallet',
                 lessons: ['Tipos de wallets', 'Crea tu primera wallet', '¿Qué es una dirección Bitcoin?', 'Recibe tus primeros sats'],
-                badge: { name: 'Primer Paso', emoji: '🪙', desc: 'Ya tienes donde guardar tu Bitcoin', image: '/images/Badges/primer-paso.png' }
+                badge: { image: '/images/Badges/primer-paso.png' }
               },
               {
                 id: 4,
                 title: 'Transacciones',
                 lessons: ['¿Qué son las comisiones (fees)?', '¿Qué es el mempool?', 'Envía una transacción', '¿Qué son las confirmaciones?'],
-                badge: { name: 'On-Chain', emoji: '⛓️', desc: 'Tu primera transacción en la blockchain', image: '/images/Badges/onchain.png' }
+                badge: { image: '/images/Badges/onchain.png' }
               },
               {
                 id: 5,
                 title: 'Exchanges CEX',
                 lessons: ['¿Qué es un exchange?', 'KYC y registro', 'Fondear tu cuenta', 'Comprar Bitcoin', 'Retirar a tu wallet'],
-                badge: { name: 'CEX', emoji: '📈', desc: 'Compraste y retiraste tus primeros BTC', image: '/images/Badges/cex.png' }
+                badge: { image: '/images/Badges/cex.png' }
               },
               {
                 id: 6,
                 title: 'Lightning Network',
                 lessons: ['¿Qué es Lightning Network?', '¿Cómo funciona un canal?', 'Pagar con Lightning', 'Recibir con Lightning'],
-                badge: { name: 'Lightning Fast', emoji: '⚡', desc: 'Pagos en segundos con Lightning Network', image: '/images/Badges/lightning-fast.png' }
+                badge: { image: '/images/Badges/lightning-fast.png' }
               },
               {
                 id: 7,
                 title: 'DEX y Swaps',
                 lessons: ['CEX vs DEX — ¿cuál es la diferencia?', '¿Qué es un swap?', 'Comisiones y slippage', 'Haz tu primer swap'],
-                badge: { name: 'DeFi Explorer', emoji: '🔄', desc: 'Hiciste tu primer swap descentralizado', image: '/images/Badges/defi-explorer.png' }
+                badge: { image: '/images/Badges/defi-explorer.png' }
               },
               {
                 id: 8,
                 title: 'Liquidez y DeFi',
                 lessons: ['¿Qué es un pool de liquidez?', '¿Qué son los LP tokens?', 'Proveer liquidez', 'Riesgos — Pérdida Impermanente'],
-                badge: { name: 'Liquidez', emoji: '🏆', desc: 'Dominaste Bitcoin de cero a DeFi', image: '/images/Badges/Liquidez.png' }
+                badge: { image: '/images/Badges/Liquidez.png' }
               }
             ].map((stage, index) => (
               <motion.div
@@ -311,7 +322,6 @@ export default function LandingPage() {
                 whileInView={{ 
                   opacity: 1, 
                   x: 0,
-                  scale: [1, 1.02],
                 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
@@ -329,7 +339,7 @@ export default function LandingPage() {
                   >
                     {/* Número + Título */}
                     <div className={`flex items-center gap-3 mb-3 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
-                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center font-bold text-black text-xl md:text-2xl shrink-0 shadow-lg shadow-orange-500/50">
+                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center font-bold text-black text-xl md:text-2xl shrink-0 shadow-lg shadow-orange-500/50 relative z-10">
                         {stage.id}
                       </div>
                       <h3 className="text-xl md:text-2xl font-bold">{stage.title}</h3>
@@ -347,7 +357,7 @@ export default function LandingPage() {
                   </motion.div>
                 </div>
 
-                {/* Nodo central con efecto (solo desktop) */}
+                {/* Nodo central (solo desktop) */}
                 <motion.div 
                   className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center z-10"
                   initial={{ scale: 0 }}
@@ -356,41 +366,33 @@ export default function LandingPage() {
                   transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
                 >
                   <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 border-4 border-amber-300/50 shadow-xl shadow-orange-500/50" />
-                  <div className="absolute inset-0 rounded-full bg-orange-400 animate-ping opacity-30" />
                 </motion.div>
 
-                {/* Badge con animación */}
-                <div className={`w-full md:w-[45%] mt-6 md:mt-0 ${index % 2 === 0 ? 'md:pl-8' : 'md:pr-8 md:text-right'}`}>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                {/* Badge SOLO IMAGEN (sin cuadro, título ni descripción) */}
+                <div className={`w-full md:w-[45%] mt-6 md:mt-0 flex ${index % 2 === 0 ? 'md:pl-8 md:justify-start' : 'md:pr-8 md:justify-end'}`}>
+                  <motion.img 
+                    src={stage.badge.image} 
+                    alt={`Badge ${stage.id}`}
+                    className="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-2xl"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
-                    whileHover={{ scale: 1.05, y: -5 }}
-                    className={`bg-gradient-to-br from-gray-800/80 to-gray-900/80 p-5 md:p-6 rounded-2xl border border-gray-700/50 inline-block backdrop-blur-sm ${
-                      index % 2 === 0 ? '' : 'md:ml-auto'
-                    } shadow-lg shadow-orange-500/10 hover:shadow-orange-500/20 transition-all cursor-pointer`}
-                  >
-                    <div className="flex items-center gap-3 md:gap-4 mb-2">
-                      <img 
-                        src={stage.badge.image} 
-                        alt={stage.badge.name}
-                        className="w-16 h-16 md:w-20 md:h-20 object-contain"
-                      />
-                      <div className={`${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                        <h4 className="text-base md:text-lg font-bold text-orange-400">
-                          {stage.badge.emoji} {stage.badge.name}
-                        </h4>
-                        <p className="text-xs md:text-sm text-gray-400">{stage.badge.desc}</p>
-                      </div>
-                    </div>
-                  </motion.div>
+                    whileHover={{ scale: 1.1, y: -5 }}
+                  />
                 </div>
               </motion.div>
             ))}
 
-            {/* Línea en móvil (izquierda) */}
-            <div className="md:hidden absolute left-4 md:left-8 top-0 bottom-0 w-0.5 md:w-1 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 rounded-full" />
+            {/* Línea en móvil (izquierda) que crece con scroll */}
+            <motion.div 
+              className="md:hidden absolute left-4 top-0 w-0.5 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 rounded-full z-0"
+              style={{ 
+                height: useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
+              }}
+            />
+            {/* Línea base gris móvil */}
+            <div className="md:hidden absolute left-4 top-0 bottom-0 w-0.5 bg-gray-700/30 z-0 rounded-full" />
           </div>
 
           <motion.div
