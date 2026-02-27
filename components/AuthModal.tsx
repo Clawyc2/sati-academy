@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, Lock, User, Chrome, Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { X, Mail, Lock, User, Loader2 } from 'lucide-react';
+import { useActiveAccount } from "thirdweb/react";
+import { ConnectEmbed } from "thirdweb/react";
+import { inAppWallet } from "thirdweb/wallets";
+import { client } from '@/lib/thirdweb';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -19,81 +22,39 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const activeAccount = useActiveAccount();
+
+  // Detectar cuando el usuario se conecta con Thirdweb
+  useEffect(() => {
+    if (activeAccount && !loading) {
+      console.log('✅ Usuario conectado:', activeAccount.address);
+      const user = {
+        id: activeAccount.address,
+        walletAddress: activeAccount.address,
+        email: null,
+        name: null,
+      };
+      localStorage.setItem('sati_user', JSON.stringify(user));
+      onSuccess();
+    }
+  }, [activeAccount, loading, onSuccess]);
+
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const validateForm = (): string | null => {
-    if (!email.trim()) {
-      return 'El correo es requerido';
-    }
-    if (!validateEmail(email)) {
-      return 'Ingresa un correo válido';
-    }
-    if (!password.trim()) {
-      return 'La contraseña es requerida';
-    }
-    if (password.length < 6) {
-      return 'La contraseña debe tener al menos 6 caracteres';
-    }
-    if (mode === 'signup' && !name.trim()) {
-      return 'El nombre es requerido';
-    }
+    if (!email.trim()) return 'El correo es requerido';
+    if (!validateEmail(email)) return 'Ingresa un correo válido';
+    if (!password.trim()) return 'La contraseña es requerida';
+    if (password.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
+    if (mode === 'signup' && !name.trim()) return 'El nombre es requerido';
     return null;
-  };
-
-  const getErrorMessage = (error: any): string => {
-    const message = error?.message || error?.toString() || '';
-    
-    if (message.includes('Invalid login credentials')) {
-      return 'Correo o contraseña incorrectos.';
-    }
-    if (message.includes('Email not confirmed')) {
-      return 'Confirma tu correo antes de entrar.';
-    }
-    if (message.includes('User not found') || message.includes('user not found')) {
-      return 'No existe una cuenta con ese correo.';
-    }
-    if (message.includes('already registered') || message.includes('already exists')) {
-      return 'Este correo ya está registrado. Intenta iniciar sesión.';
-    }
-    if (message.includes('Password should be at least')) {
-      return 'La contraseña debe tener al menos 6 caracteres.';
-    }
-    
-    return 'Algo salió mal. Intenta de nuevo.';
-  };
-
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/aprender`
-        }
-      });
-      
-      if (error) {
-        setError(getErrorMessage(error));
-        return;
-      }
-      
-      // OAuth will redirect, so we don't call onSuccess here
-    } catch (err: any) {
-      setError(getErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validar formulario antes de enviar
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
@@ -104,53 +65,39 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     setError('');
     
     try {
-      if (mode === 'signup') {
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              name: name,
-            }
-          }
-        });
-        
-        if (signUpError) {
-          setError(getErrorMessage(signUpError));
-          return;
-        }
-        
-        if (data.user) {
-          // Check if email confirmation is required
-          if (data.user.identities?.length === 0) {
-            setError('Revisa tu correo para confirmar tu cuenta.');
-            return;
-          }
-          onSuccess();
-        }
-      } else {
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        
-        if (signInError) {
-          setError(getErrorMessage(signInError));
-          return;
-        }
-        
-        if (data.user) {
-          onSuccess();
-        }
-      }
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const user = {
+        id: `user_${Date.now()}`,
+        email: email,
+        name: mode === 'signup' ? name : email.split('@')[0],
+      };
+      
+      localStorage.setItem('sati_user', JSON.stringify(user));
+      setError('¡Bienvenido a Sati Academy!');
+      setTimeout(() => onSuccess(), 1500);
     } catch (err: any) {
-      setError(getErrorMessage(err));
+      setError('Error en la autenticación. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
   };
 
   if (!isOpen) return null;
+
+  // Configurar wallets de Thirdweb
+  const wallets = [
+    inAppWallet({
+      auth: {
+        options: [
+          "google",
+          "discord", 
+          "email",
+        ],
+        mode: "popup",
+      },
+    }),
+  ];
 
   return (
     <AnimatePresence>
@@ -177,7 +124,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           </button>
 
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <div className="text-5xl mb-4">🪙</div>
             <h2 className="text-2xl font-bold mb-2">
               {mode === 'initial' && '¡Bienvenido a Sati Academy!'}
@@ -191,32 +138,31 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             </p>
           </div>
 
-          {/* Error message */}
+          {/* Error/Success message */}
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl mb-4 text-sm">
+            <div className={`px-4 py-3 rounded-xl mb-4 text-sm ${
+              error.includes('¡') || error.includes('Bienvenido')
+                ? 'bg-green-500/10 border border-green-500/30 text-green-400'
+                : 'bg-red-500/10 border border-red-500/30 text-red-400'
+            }`}>
               {error}
             </div>
           )}
 
           {mode === 'initial' && (
             <div className="space-y-4">
-              {/* Google Sign In */}
-              <button
-                onClick={handleGoogleSignIn}
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white text-gray-900 rounded-xl font-medium hover:bg-gray-100 transition-all disabled:opacity-50"
-              >
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <>
-                    <Chrome className="w-5 h-5" />
-                    Continuar con Google
-                  </>
-                )}
-              </button>
+              {/* INTERFAZ DE THIRDWEB */}
+              <div className="thirdweb-container">
+                <ConnectEmbed
+                  client={client}
+                  wallets={wallets}
+                  modalSize="compact"
+                  showThirdwebBranding={false}
+                  theme="dark"
+                />
+              </div>
 
-              <div className="relative flex items-center justify-center my-6">
+              <div className="relative flex items-center justify-center my-4">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-700"></div>
                 </div>
