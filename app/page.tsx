@@ -1,20 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   BookOpen, Trophy, Users, Bitcoin, Sparkles, Play, ChevronRight
 } from 'lucide-react';
-import { useRef } from 'react';
 import AuthModal from '@/components/AuthModal';
 
 export default function LandingPage() {
   const [showAuth, setShowAuth] = useState(false);
-  const timelineRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: timelineRef,
-    offset: ["start end", "end start"]
-  });
 
   const handleStartNow = () => {
     setShowAuth(true);
@@ -235,7 +229,7 @@ export default function LandingPage() {
       </section>
 
       {/* Timeline Section - Tu Camino Bitcoiner */}
-      <section ref={timelineRef} className="py-24 md:py-32 relative bg-gradient-to-b from-transparent via-orange-950/10 to-transparent overflow-hidden">
+      <section className="py-24 md:py-32 relative bg-gradient-to-b from-transparent via-orange-950/10 to-transparent overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -253,17 +247,8 @@ export default function LandingPage() {
 
           {/* Timeline */}
           <div className="relative">
-            {/* Línea vertical central que crece con scroll (DETRÁS) - solo desktop */}
-            <motion.div 
-              className="hidden md:block absolute left-1/2 top-0 w-1 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 -translate-x-1/2 rounded-full z-0"
-              style={{ 
-                height: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]),
-                background: 'linear-gradient(to bottom, #f7931a, #ff7b00, #f7931a)'
-              }}
-            />
-
-            {/* Línea base gris (fondo) */}
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-gray-700/30 -translate-x-1/2 z-0 rounded-full" />
+            {/* Línea vertical central (solo desktop) */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 -translate-x-1/2 rounded-full z-0" />
 
             {/* Etapas */}
             {[
@@ -330,7 +315,7 @@ export default function LandingPage() {
                 }`}
               >
                 {/* Contenido izquierdo/derecho */}
-                <div className={`w-full md:w-[45%] ${index % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8'}`}>
+                <div className={`w-full md:w-[calc(50%-2rem)] ${index % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8'}`}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -358,22 +343,16 @@ export default function LandingPage() {
                 </div>
 
                 {/* Nodo central (solo desktop) */}
-                <motion.div 
-                  className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center z-10"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-                >
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 border-4 border-amber-300/50 shadow-xl shadow-orange-500/50" />
-                </motion.div>
+                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center z-10">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 border-4 border-gray-900 shadow-xl shadow-orange-500/50" />
+                </div>
 
-                {/* Badge SOLO IMAGEN (sin cuadro, título ni descripción) */}
-                <div className={`w-full md:w-[45%] mt-6 md:mt-0 flex ${index % 2 === 0 ? 'md:pl-8 md:justify-start' : 'md:pr-8 md:justify-end'}`}>
+                {/* Badge SOLO IMAGEN (sin cuadro) */}
+                <div className={`w-full md:w-[calc(50%-2rem)] mt-6 md:mt-0 flex ${index % 2 === 0 ? 'md:pl-8 md:justify-start' : 'md:pr-8 md:justify-end'}`}>
                   <motion.img 
                     src={stage.badge.image} 
                     alt={`Badge ${stage.id}`}
-                    className="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-2xl"
+                    className="w-24 h-24 md:w-32 md:h-32 object-contain drop-shadow-2xl"
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
@@ -384,15 +363,8 @@ export default function LandingPage() {
               </motion.div>
             ))}
 
-            {/* Línea en móvil (izquierda) que crece con scroll */}
-            <motion.div 
-              className="md:hidden absolute left-4 top-0 w-0.5 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 rounded-full z-0"
-              style={{ 
-                height: useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
-              }}
-            />
-            {/* Línea base gris móvil */}
-            <div className="md:hidden absolute left-4 top-0 bottom-0 w-0.5 bg-gray-700/30 z-0 rounded-full" />
+            {/* Línea en móvil (izquierda) */}
+            <div className="md:hidden absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 rounded-full z-0" />
           </div>
 
           <motion.div
