@@ -22,7 +22,65 @@ const STAGE_BADGES = [
   { name: 'Liquidity Master', image: '/images/Badges/Liquidez.png' },
 ];
 
-// Sidebar component
+// Bottom Navigation para Mobile
+function BottomNav({ activeTab, onTabChange }: { 
+  activeTab: string; 
+  onTabChange: (tab: string) => void;
+}) {
+  const tabs = [
+    { id: 'learn', icon: Map, label: 'Aprender' },
+    { id: 'ranking', icon: Trophy, label: 'Ranking' },
+    { id: 'badges', icon: Gift, label: 'Badges' },
+    { id: 'profile', icon: User, label: 'Perfil' },
+  ];
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 h-16 bg-[var(--bg2)] border-t border-[var(--gray)] z-50 flex items-center justify-around md:hidden">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          onClick={() => onTabChange(tab.id)}
+          className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
+            activeTab === tab.id 
+              ? 'text-orange-400' 
+              : 'text-[var(--text2)]'
+          }`}
+        >
+          <tab.icon className="w-5 h-5" />
+          <span className="text-xs mt-1">{tab.label}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+// Stats Mini Cards para Mobile
+function MobileStats() {
+  return (
+    <div className="md:hidden overflow-x-auto px-4 py-3 bg-[var(--bg2)] border-b border-[var(--gray)]">
+      <div className="flex gap-3 min-w-max">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg3)] border border-[var(--gray)]">
+          <span>🔥</span>
+          <span className="text-sm font-medium">Racha: <span className="text-orange-400">0</span></span>
+        </div>
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg3)] border border-[var(--gray)]">
+          <span>💎</span>
+          <span className="text-sm font-medium">Puntos: <span className="text-cyan-400">0</span></span>
+        </div>
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg3)] border border-[var(--gray)]">
+          <span>🪙</span>
+          <span className="text-sm font-medium">$SATI: <span className="text-orange-400">0.00</span></span>
+        </div>
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg3)] border border-[var(--gray)]">
+          <span>⚡</span>
+          <span className="text-sm font-medium">Desafío: <span className="text-amber-400">0/1</span></span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Sidebar para Desktop (y drawer en mobile)
 function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: { 
   activeTab: string; 
   onTabChange: (tab: string) => void;
@@ -41,40 +99,103 @@ function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: {
     <>
       {/* Overlay para móvil */}
       <div 
-        className={`fixed inset-0 bg-black/50 z-30 md:hidden transition-opacity ${
+        className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity ${
           collapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
         onClick={onClose}
       />
       
-      <aside className={`fixed left-0 top-0 h-screen bg-[var(--bg2)] border-r border-[var(--gray)] flex flex-col z-40 transition-all duration-300 ${
-        collapsed ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
-      } md:w-64`}>
+      {/* Desktop Sidebar - siempre visible con texto */}
+      <aside className={`fixed left-0 top-0 h-screen w-56 bg-[var(--bg2)] border-r border-[var(--gray)] flex-col z-50 transition-transform duration-300 ${
+        collapsed ? '-translate-x-full md:translate-x-0' : 'translate-x-0'
+      } hidden md:flex`}>
         {/* Logo */}
-        <div className="p-4 md:p-5 border-b border-[var(--gray)]">
-          <div className="flex items-center justify-between">
+        <div className="p-5 border-b border-[var(--gray)]">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-2xl shrink-0">
+              🪙
+            </div>
+            <div>
+              <p className="font-bold text-sm" style={{ fontFamily: 'Syne' }}>Sati Academy</p>
+              <p className="text-xs text-[var(--text2)]">Aprende Bitcoin</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Menu - siempre con iconos + texto en desktop */}
+        <nav className="flex-1 py-4">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => onTabChange(item.id)}
+              className={`w-full flex items-center gap-3 px-5 py-3 transition-all ${
+                activeTab === item.id 
+                  ? 'bg-orange-500/10 border-l-4 border-orange-500 text-orange-400' 
+                  : 'text-[var(--text)] hover:bg-[var(--bg3)]'
+              }`}
+            >
+              <item.icon className="w-5 h-5 shrink-0" />
+              <span className="text-sm font-medium">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        {/* Bottom Section */}
+        <div className="border-t border-[var(--gray)] p-4">
+          {/* Profile Quick Access */}
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg3)] mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center shrink-0">
+              👤
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm truncate">Usuario</p>
+              <p className="text-xs text-[var(--text2)]">Etapa 1</p>
+            </div>
+            <Settings className="w-4 h-4 text-[var(--text2)]" />
+          </div>
+
+          {/* Logout Button - siempre visible */}
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
+          >
+            <LogOut className="w-5 h-5 shrink-0" />
+            <span className="text-sm font-medium">Cerrar sesión</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Drawer */}
+      <aside className={`fixed left-0 top-0 h-screen w-72 bg-[var(--bg2)] border-r border-[var(--gray)] flex flex-col z-50 transition-transform duration-300 ${
+        collapsed ? '-translate-x-full' : 'translate-x-0'
+      } md:hidden`}>
+        {/* Logo + Stats */}
+        <div className="p-5 border-b border-[var(--gray)]">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-2xl shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-2xl">
                 🪙
               </div>
-              {!collapsed && (
-                <div>
-                  <p className="font-bold text-sm" style={{ fontFamily: 'Syne' }}>Sati Academy</p>
-                  <p className="text-xs text-[var(--text2)]">Aprende Bitcoin</p>
-                </div>
-              )}
+              <div>
+                <p className="font-bold text-sm" style={{ fontFamily: 'Syne' }}>Sati Academy</p>
+                <p className="text-xs text-[var(--text2)]">Aprende Bitcoin</p>
+              </div>
             </div>
-            <button 
-              onClick={onClose}
-              className="md:hidden p-2 hover:bg-[var(--bg3)] rounded-lg"
-            >
+            <button onClick={onClose} className="p-2 hover:bg-[var(--bg3)] rounded-lg">
               <X className="w-5 h-5" />
             </button>
+          </div>
+          
+          {/* Stats compactos */}
+          <div className="flex gap-4 text-sm">
+            <div>🔥 <span className="text-orange-400 font-semibold">0</span></div>
+            <div>💎 <span className="text-cyan-400 font-semibold">0</span></div>
+            <div>⚡ <span className="text-amber-400 font-semibold">Etapa 1</span></div>
           </div>
         </div>
 
         {/* Menu */}
-        <nav className="flex-1 py-2 md:py-4">
+        <nav className="flex-1 py-4">
           {menuItems.map((item) => (
             <button
               key={item.id}
@@ -82,45 +203,26 @@ function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: {
                 onTabChange(item.id);
                 onClose();
               }}
-              className={`w-full flex items-center gap-3 px-4 md:px-5 py-3 transition-all ${
+              className={`w-full flex items-center gap-3 px-5 py-3 transition-all ${
                 activeTab === item.id 
                   ? 'bg-orange-500/10 border-l-4 border-orange-500 text-orange-400' 
                   : 'text-[var(--text)] hover:bg-[var(--bg3)]'
-              } ${collapsed ? 'md:justify-center' : ''}`}
+              }`}
             >
               <item.icon className="w-5 h-5 shrink-0" />
-              {(!collapsed) && (
-                <span className="text-sm font-medium">{item.label}</span>
-              )}
+              <span className="text-sm font-medium">{item.label}</span>
             </button>
           ))}
         </nav>
 
-        {/* Bottom Section */}
-        <div className="border-t border-[var(--gray)] p-3 md:p-4">
-          {/* Profile Quick Access */}
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg3)] mb-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center shrink-0">
-              👤
-            </div>
-            {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate">Usuario</p>
-                <p className="text-xs text-[var(--text2)]">Etapa 1</p>
-              </div>
-            )}
-            {!collapsed && <Settings className="w-4 h-4 text-[var(--text2)]" />}
-          </div>
-
-          {/* Logout Button */}
+        {/* Logout */}
+        <div className="p-4 border-t border-[var(--gray)]">
           <button
             onClick={onLogout}
-            className={`w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors ${
-              collapsed ? 'md:justify-center' : ''
-            }`}
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
           >
             <LogOut className="w-5 h-5 shrink-0" />
-            {(!collapsed) && <span className="text-sm font-medium">Cerrar sesión</span>}
+            <span className="text-sm font-medium">Cerrar sesión</span>
           </button>
         </div>
       </aside>
@@ -128,10 +230,10 @@ function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: {
   );
 }
 
-// Topbar component
+// Topbar
 function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   return (
-    <header className="fixed top-0 left-0 md:left-64 right-0 md:right-[280px] h-16 bg-[var(--bg)] border-b border-[var(--gray)] z-30 px-4 md:px-6 flex items-center justify-between">
+    <header className="fixed top-0 left-0 md:left-56 right-0 md:right-[280px] h-16 bg-[var(--bg)] border-b border-[var(--gray)] z-30 px-4 md:px-6 flex items-center justify-between">
       {/* Left - Menu + Logo */}
       <div className="flex items-center gap-3">
         <button 
@@ -144,7 +246,7 @@ function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         <span className="font-bold text-base md:text-lg hidden md:block" style={{ fontFamily: 'Syne' }}>Sati Academy</span>
       </div>
       
-      {/* Center - Stats (ocultos en móvil) */}
+      {/* Center - Stats (solo desktop) */}
       <div className="hidden md:flex items-center gap-6">
         <div className="flex items-center gap-2">
           <span className="text-orange-400">🔥</span>
@@ -175,7 +277,7 @@ function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   );
 }
 
-// Right Panel with widgets
+// Right Panel (solo desktop)
 function RightPanel() {
   const weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   const top3 = [
@@ -192,19 +294,29 @@ function RightPanel() {
           <span className="text-2xl">🪙</span>
           <span className="font-bold text-lg">$SATI tokens:</span>
         </div>
-        <p className="text-2xl font-bold text-orange-400">0.00</p>
-        <p className="text-xs text-[var(--text2)] mt-2">Completa etapas para ganar</p>
+        <p className="text-3xl font-bold gradient-text mb-1">0.00</p>
+        <p className="text-xs text-[var(--text2)]">≈ $0.00 USD</p>
       </div>
 
-      {/* Widget 2 - Racha */}
+      {/* Widget 2 - Racha diaria */}
       <div className="bg-[var(--bg3)] rounded-xl p-4 border border-[var(--gray)]">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-xl">🔥</span>
-          <span className="font-bold">Racha de <span className="text-orange-400">0</span> días</span>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🔥</span>
+            <span className="font-bold">Racha diaria</span>
+          </div>
+          <span className="text-2xl font-bold text-orange-400">0</span>
         </div>
-        <div className="flex gap-1 mb-3">
+        
+        {/* Week days */}
+        <div className="flex justify-between mb-2">
           {weekDays.map((day, i) => (
-            <div key={i} className="w-8 h-8 rounded-lg bg-[var(--bg2)] flex items-center justify-center text-xs font-semibold text-[var(--text2)]">
+            <div 
+              key={i}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                i < 0 ? 'bg-orange-500 text-gray-900' : 'bg-[var(--gray)] text-[var(--text2)]'
+              }`}
+            >
               {day}
             </div>
           ))}
@@ -235,153 +347,179 @@ function RightPanel() {
         </div>
 
         {/* User Position */}
-        <div className="flex items-center gap-3 p-2 rounded-lg bg-[var(--bg2)]">
+        <div className="bg-[var(--bg2)] rounded-lg p-3 flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-sm">
             👤
           </div>
           <div className="flex-1">
-            <p className="font-semibold text-sm">Tú</p>
-            <p className="text-xs text-[var(--text2)]">150 pts</p>
+            <p className="text-sm font-medium">Tú</p>
+            <p className="text-xs text-[var(--text2)]">0 puntos</p>
           </div>
-          <span className="text-xs text-[var(--text2)]">#1,234</span>
+          <span className="text-sm font-bold text-[var(--text2)]">#999</span>
         </div>
       </div>
 
-      {/* Widget 4 - Desafío del día */}
-      <div className="bg-[var(--bg3)] rounded-xl p-4 border border-[var(--gray)]">
-        <div className="flex items-center gap-2 mb-3">
+      {/* Widget 4 - Desafío semanal */}
+      <div className="bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-xl p-4 border border-purple-500/30">
+        <div className="flex items-center gap-2 mb-2">
           <span className="text-xl">⚡</span>
-          <span className="font-bold">Desafío del día</span>
+          <span className="font-bold">Desafío semanal</span>
         </div>
-        <p className="text-sm text-[var(--text)] mb-3">Completa 1 lección hoy</p>
+        <p className="text-sm text-[var(--text2)] mb-3">Completa 5 lecciones esta semana</p>
         
-        {/* Progress Bar */}
-        <div className="w-full h-2 bg-[var(--bg2)] rounded-full overflow-hidden">
-          <div className="h-full w-0 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full" />
+        {/* Progress */}
+        <div className="w-full h-3 bg-[var(--gray)] rounded-full overflow-hidden mb-2">
+          <div className="h-full w-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full" />
         </div>
-        <p className="text-xs text-[var(--text2)] mt-2 text-center">0/1</p>
+        <p className="text-xs text-[var(--text2)]">0/5 completados</p>
       </div>
     </aside>
   );
 }
 
 // Stage Tabs
-function StageTabs({ activeStage, onStageChange }: { 
-  activeStage: number; 
+function StageTabs({ activeStage, onStageChange }: {
+  activeStage: number;
   onStageChange: (stage: number) => void;
 }) {
+  const stages = [1, 2, 3, 4, 5, 6, 7, 8];
+
   return (
-    <div className="fixed top-16 left-[220px] right-[280px] h-14 bg-[var(--bg2)] border-b border-[var(--gray)] z-20 px-6 flex items-center gap-2 overflow-x-auto">
-      {STAGES_CONFIG.map((stage) => {
-        const isUnlocked = stage.id === 1;
-        const isActive = activeStage === stage.id;
-        
-        return (
-          <button
-            key={stage.id}
-            onClick={() => isUnlocked && onStageChange(stage.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
-              isActive
-                ? 'bg-orange-500/20 border-2 border-orange-500 text-orange-400'
-                : isUnlocked
-                  ? 'bg-[var(--bg3)] border border-[var(--gray)] text-[var(--text)] hover:border-orange-500/50'
-                  : 'bg-[var(--bg3)] border border-[var(--gray)] text-[var(--text2)] cursor-not-allowed'
-            }`}
-          >
-            <span>Etapa {stage.id}</span>
-            {isActive && <span className="w-2 h-2 rounded-full bg-orange-400" />}
-            {!isUnlocked && <span>🔒</span>}
-          </button>
-        );
-      })}
+    <div className="fixed top-16 left-0 md:left-56 right-0 md:right-[280px] h-14 bg-[var(--bg2)] border-b border-[var(--gray)] z-20 flex items-center px-4 overflow-x-auto">
+      <div className="flex gap-1 min-w-max">
+        {stages.map((stage) => {
+          const isLocked = stage > 1;
+          const isActive = activeStage === stage;
+          
+          return (
+            <button
+              key={stage}
+              onClick={() => !isLocked && onStageChange(stage)}
+              disabled={isLocked}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                isActive 
+                  ? 'bg-orange-500 text-gray-900' 
+                  : isLocked 
+                    ? 'bg-[var(--bg3)] text-[var(--text2)] cursor-not-allowed'
+                    : 'bg-[var(--bg3)] text-[var(--text)] hover:bg-orange-500/20'
+              }`}
+            >
+              {isLocked ? (
+                <>
+                  <Lock className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">E{stage}</span>
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">Etapa {stage}</span>
+                  <span className="sm:hidden">E{stage}</span>
+                </>
+              )}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-// Map Node
-function MapNode({ 
-  type, 
-  status, 
-  title, 
-  onClick,
-  badge
-}: { 
-  type: 'lesson' | 'exam' | 'chest' | 'badge';
-  status: 'done' | 'current' | 'locked';
-  title: string;
-  onClick: () => void;
-  badge?: { name: string; image: string };
-}) {
-  const getNodeStyle = () => {
-    if (status === 'done') return 'bg-green-500 shadow-lg shadow-green-500/50';
-    if (status === 'current') return 'bg-orange-500 shadow-lg shadow-orange-500/50 animate-pulse';
-    if (type === 'exam') return 'bg-purple-600';
-    if (type === 'chest') return 'bg-amber-700';
-    return 'bg-[var(--bg3)] opacity-60';
-  };
-
-  const getIcon = () => {
-    if (status === 'done') return <CheckCircle className="w-6 h-6 text-white" />;
-    if (status === 'locked') return <Lock className="w-6 h-6 text-[var(--text2)]" />;
-    if (type === 'lesson') return <Star className="w-6 h-6 text-white" />;
-    if (type === 'exam') return <FileQuestion className="w-6 h-6 text-white" />;
-    if (type === 'chest') return <span className="text-2xl">📦</span>;
-    return null;
-  };
+// Level Map
+function LevelMap({ activeStage }: { activeStage: number }) {
+  const [selectedLesson, setSelectedLesson] = useState<any>(null);
+  
+  const stageConfig = STAGES_CONFIG[activeStage - 1] || STAGES_CONFIG[0];
+  
+  // Detectar si es mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
+  // Offsets más pequeños en mobile
+  const desktopOffsets = [-80, 80, -60, 60, -80, 80, -60, 60];
+  const mobileOffsets = [-40, 40, -40, 40, -40, 40, -40, 40];
+  const offsets = isMobile ? mobileOffsets : desktopOffsets;
 
   return (
-    <div className="flex flex-col items-center">
-      <button
-        onClick={status !== 'locked' ? onClick : undefined}
-        disabled={status === 'locked'}
-        className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${getNodeStyle()} ${
-          status !== 'locked' ? 'cursor-pointer hover:scale-110' : 'cursor-not-allowed'
-        }`}
-      >
-        {type === 'badge' && badge ? (
-          <img src={badge.image} alt={badge.name} className="w-10 h-10 object-contain" />
-        ) : (
-          getIcon()
-        )}
-      </button>
-      <p className={`text-xs mt-2 text-center max-w-[100px] ${status === 'locked' ? 'text-[var(--text2)]' : 'text-[var(--text)]'}`}>
-        {title}
-      </p>
+    <div className="pt-16 md:pt-28 pb-20 md:pb-8 px-4 md:px-8">
+      {/* Header de etapa */}
+      <div className="mb-6 md:mb-8">
+        <h2 className="text-xl md:text-2xl font-bold mb-2" style={{ fontFamily: 'Syne' }}>
+          Etapa {activeStage}: {stageConfig.title}
+        </h2>
+        <p className="text-sm md:text-base text-[var(--text2)]">{stageConfig.description}</p>
+      </div>
+
+      {/* Mapa de nodos */}
+      <div className="relative flex flex-col items-center gap-3 md:gap-4">
+        {stageConfig.lessons.map((lesson: any, index: number) => {
+          const isCompleted = index === 0;
+          const isCurrent = index === 1;
+          const isLocked = index > 1;
+          const isExam = lesson.type === 'exam';
+          const isBadge = lesson.type === 'badge';
+          
+          const offset = offsets[index % offsets.length];
+
+          return (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="relative flex flex-col items-center"
+              style={{ marginLeft: `${offset}px` }}
+            >
+              {/* Nodo */}
+              <button
+                onClick={() => !isLocked && setSelectedLesson({ ...lesson, index })}
+                disabled={isLocked}
+                className={`relative flex items-center justify-center rounded-full transition-all ${
+                  isCompleted ? 'w-14 h-14 md:w-[72px] md:h-[72px] node-done' :
+                  isCurrent ? 'w-14 h-14 md:w-[72px] md:h-[72px] node-current' :
+                  isExam ? 'w-14 h-14 md:w-[72px] md:h-[72px] node-exam' :
+                  isBadge ? 'w-14 h-14 md:w-[72px] md:h-[72px] node-chest' :
+                  'w-14 h-14 md:w-[72px] md:h-[72px] node-locked'
+                }`}
+              >
+                {isCompleted && <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-white" />}
+                {isCurrent && <Play className="w-6 h-6 md:w-8 md:h-8 text-white" />}
+                {isExam && <FileQuestion className="w-6 h-6 md:w-8 md:h-8 text-white" />}
+                {isBadge && <Gift className="w-6 h-6 md:w-8 md:h-8 text-white" />}
+                {isLocked && <Lock className="w-5 h-5 md:w-6 md:h-6 text-[var(--text2)]" />}
+
+                {/* Tooltip (solo desktop) */}
+                {!isLocked && (
+                  <div className="tooltip hidden md:block">
+                    <p className="font-medium">{lesson.title}</p>
+                    {!isCompleted && !isBadge && <p className="text-xs text-[var(--text2)]">{lesson.duration || '5 min'}</p>}
+                  </div>
+                )}
+              </button>
+
+              {/* Label */}
+              <p className="text-[10px] md:text-xs text-center mt-1.5 max-w-[80px] md:max-w-[100px] leading-tight">
+                {lesson.title}
+              </p>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Botón GUÍA */}
+      <div className="fixed bottom-20 md:bottom-8 right-4 md:right-8">
+        <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all text-sm md:text-base">
+          📖 GUÍA
+        </button>
+      </div>
     </div>
   );
 }
 
 // Lesson Modal
-function LessonModal({ 
-  isOpen, 
-  onClose, 
-  lesson 
-}: { 
+function LessonModal({ isOpen, onClose, lesson }: { 
   isOpen: boolean; 
-  onClose: () => void;
-  lesson: { type: string; title: string } | null;
+  onClose: () => void; 
+  lesson: any;
 }) {
   if (!isOpen || !lesson) return null;
-
-  const getIcon = () => {
-    switch (lesson.type) {
-      case 'lesson': return '⭐';
-      case 'exam': return '📝';
-      case 'chest': return '📦';
-      case 'badge': return '🏆';
-      default: return '📖';
-    }
-  };
-
-  const getDescription = () => {
-    switch (lesson.type) {
-      case 'lesson': return 'Aprende los conceptos fundamentales de forma interactiva.';
-      case 'exam': return 'Demuestra lo que has aprendido. Necesitas 60% para aprobar.';
-      case 'chest': return '¡Recompensa desbloqueada! Reclama tus $SATI.';
-      case 'badge': return '¡Badge desbloqueado! Muestra tu logro al mundo.';
-      default: return 'Continúa tu aprendizaje.';
-    }
-  };
 
   return (
     <AnimatePresence>
@@ -396,39 +534,40 @@ function LessonModal({
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-[var(--bg2)] rounded-3xl p-8 max-w-md w-full border border-[var(--gray)] relative"
+          className="bg-[var(--bg2)] rounded-2xl p-6 max-w-md w-full border border-[var(--gray)]"
           onClick={(e) => e.stopPropagation()}
         >
-          <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-[var(--bg3)] rounded-lg">
-            <X className="w-5 h-5 text-[var(--text2)]" />
-          </button>
-
-          <div className="text-center mb-6">
-            <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-4xl shadow-lg mb-4">
-              {getIcon()}
+          <div className="text-center mb-4">
+            <div className="text-4xl mb-3">
+              {lesson.type === 'lesson' && '📚'}
+              {lesson.type === 'exam' && '📝'}
+              {lesson.type === 'badge' && '🎁'}
             </div>
-            <h2 className="text-xl font-bold mb-2" style={{ fontFamily: 'Syne' }}>{lesson.title}</h2>
-            <p className="text-[var(--text2)] text-sm">{getDescription()}</p>
+            <h3 className="text-xl font-bold mb-2">{lesson.title}</h3>
+            <p className="text-[var(--text2)]">{lesson.description || 'Lección interactiva'}</p>
           </div>
 
-          <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 px-4 py-3 border border-[var(--gray)] rounded-xl text-[var(--text2)]">
-              Cerrar
+          {lesson.type !== 'badge' && (
+            <button className="w-full py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-gray-900 rounded-xl font-bold">
+              Comenzar
             </button>
-            <button onClick={onClose} className="flex-1 px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-gray-900 rounded-xl font-semibold flex items-center justify-center gap-2">
-              <Play className="w-4 h-4" />
-              ¡Empezar!
-            </button>
-          </div>
+          )}
+
+          <button 
+            onClick={onClose}
+            className="w-full mt-3 py-2 text-[var(--text2)] hover:text-[var(--text)] transition-colors"
+          >
+            Cerrar
+          </button>
         </motion.div>
       </motion.div>
     </AnimatePresence>
   );
 }
 
-// Logout Confirmation Modal
-function LogoutModal({ isOpen, onConfirm, onCancel }: { 
-  isOpen: boolean; 
+// Logout Modal
+function LogoutModal({ isOpen, onConfirm, onCancel }: {
+  isOpen: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -446,116 +585,31 @@ function LogoutModal({ isOpen, onConfirm, onCancel }: {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-[var(--bg2)] rounded-3xl p-8 max-w-sm w-full border border-[var(--gray)] text-center"
+          className="bg-[var(--bg2)] rounded-2xl p-6 max-w-sm w-full border border-[var(--gray)]"
         >
-          <div className="text-5xl mb-4">🚪</div>
-          <h2 className="text-xl font-bold mb-2" style={{ fontFamily: 'Syne' }}>¿Cerrar sesión?</h2>
-          <p className="text-[var(--text2)] text-sm mb-6">Se cerrará tu sesión en este dispositivo.</p>
+          <div className="text-center mb-6">
+            <div className="text-5xl mb-4">👋</div>
+            <h3 className="text-xl font-bold mb-2">¿Cerrar sesión?</h3>
+            <p className="text-[var(--text2)]">Tu progreso está guardado en la nube</p>
+          </div>
 
           <div className="flex gap-3">
-            <button onClick={onCancel} className="flex-1 px-4 py-3 border border-[var(--gray)] rounded-xl text-[var(--text2)]">
+            <button 
+              onClick={onCancel}
+              className="flex-1 py-3 border border-[var(--gray)] rounded-xl font-medium hover:bg-[var(--bg3)] transition-colors"
+            >
               Cancelar
             </button>
-            <button onClick={onConfirm} className="flex-1 px-4 py-3 bg-red-500 text-white rounded-xl font-semibold">
+            <button 
+              onClick={onConfirm}
+              className="flex-1 py-3 bg-red-500/20 text-red-400 rounded-xl font-medium hover:bg-red-500/30 transition-colors"
+            >
               Cerrar sesión
             </button>
           </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
-}
-
-// Level Map with zigzag
-function LevelMap({ activeStage }: { activeStage: number }) {
-  const [selectedLesson, setSelectedLesson] = useState<{ type: string; title: string } | null>(null);
-
-  const stage = STAGES_CONFIG[activeStage - 1];
-  const badge = STAGE_BADGES[activeStage - 1];
-
-  // Zigzag offsets - serpentine pattern
-  const zigzagOffsets = [-80, 80, -60, 60, -40, 40, -20, 20];
-
-  return (
-    <div className="pt-28 pb-8 px-6 max-w-3xl mx-auto">
-      {/* Stage Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <button className="p-2 hover:bg-[var(--bg3)] rounded-lg">
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h2 className="text-2xl font-bold" style={{ fontFamily: 'Syne' }}>
-              ETAPA {stage.id} — {stage.title}
-            </h2>
-            <p className="text-sm text-[var(--text2)]">{stage.subtitle}</p>
-          </div>
-        </div>
-        <button className="px-4 py-2 border border-[var(--gray)] rounded-lg text-sm font-medium hover:border-orange-500 hover:text-orange-400 transition-colors">
-          📋 GUÍA
-        </button>
-      </div>
-
-      {/* Nodes with zigzag */}
-      <div className="relative flex flex-col items-center">
-        {stage.lessons.map((lesson, lessonIndex) => {
-          const isExam = lesson.type === 'exam';
-          const isChest = lesson.type === 'chest';
-          
-          // Status logic (solo el primer nodo está activo)
-          const status = lessonIndex === 0 ? 'current' : 'locked';
-          
-          // Offset (zigzag) - exam and chest centered
-          const offset = isExam || isChest ? 0 : zigzagOffsets[lessonIndex % zigzagOffsets.length];
-
-          return (
-            <div key={lesson.id} className="relative flex flex-col items-center mb-4">
-              {/* Dotted curved connector line (except first) */}
-              {lessonIndex > 0 && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 h-12 flex items-center justify-center">
-                  <div className={`w-0.5 h-full border-l-2 border-dashed ${status === 'locked' ? 'border-[var(--gray)]' : 'border-orange-500'}`} />
-                </div>
-              )}
-
-              {/* Node with offset */}
-              <div style={{ transform: `translateX(${offset}px)` }} className="relative z-10 mt-3">
-                <MapNode
-                  type={isChest ? 'chest' : isExam ? 'exam' : 'lesson'}
-                  status={status as any}
-                  title={lesson.title}
-                  onClick={() => setSelectedLesson({ type: lesson.type, title: lesson.title })}
-                />
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Badge Node - SIEMPRE AL FINAL */}
-        <div className="relative flex flex-col items-center mt-4">
-          {/* Connector line from chest */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-12 flex items-center justify-center">
-            <div className="w-0.5 h-full border-l-2 border-dashed border-[var(--gray)]" />
-          </div>
-          
-          <div className="relative z-10 mt-3">
-            <MapNode
-              type="badge"
-              status="locked"
-              title={`🏆 Badge: ${badge.name}`}
-              badge={badge}
-              onClick={() => setSelectedLesson({ type: 'badge', title: badge.name })}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Lesson Modal */}
-      <LessonModal
-        isOpen={!!selectedLesson}
-        onClose={() => setSelectedLesson(null)}
-        lesson={selectedLesson}
-      />
-    </div>
   );
 }
 
@@ -587,20 +641,26 @@ export default function AppPage() {
       />
       <Topbar onMenuClick={() => setSidebarOpen(true)} />
       
+      {/* Bottom Navigation para Mobile */}
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      
       {activeTab === 'learn' && (
         <>
+          {/* Stats mini cards para mobile */}
+          <MobileStats />
+          
           <StageTabs activeStage={activeStage} onStageChange={setActiveStage} />
           <RightPanel />
-          <main className="ml-0 md:ml-64 mr-0 md:mr-[280px] min-h-screen pt-16 md:pt-16">
+          <main className="ml-0 md:ml-56 mr-0 md:mr-[280px] min-h-screen pb-16 md:pb-0">
             <LevelMap activeStage={activeStage} />
           </main>
         </>
       )}
 
       {activeTab !== 'learn' && (
-        <main className="ml-0 md:ml-64 min-h-screen pt-20">
-          <div className="flex items-center justify-center h-[60vh]">
-            <div className="text-center px-4">
+        <main className="ml-0 md:ml-56 min-h-screen pt-20 pb-16 md:pb-0">
+          <div className="flex items-center justify-center h-[60vh] px-4">
+            <div className="text-center">
               <div className="text-6xl mb-4">🚧</div>
               <h2 className="text-2xl font-bold mb-2">En construcción</h2>
               <p className="text-[var(--text2)]">Esta sección estará disponible pronto</p>
