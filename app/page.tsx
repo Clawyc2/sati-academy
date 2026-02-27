@@ -234,7 +234,7 @@ export default function LandingPage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: { once: true, amount: 0.3 }}
+            viewport={{ once: true }}
             className="text-center mb-12 md:mb-20"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
