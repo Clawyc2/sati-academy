@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Map, Trophy, User, X, Star, BookOpen, Gamepad2, 
   FileQuestion, Gift, Lock, CheckCircle, Play, Settings, LogOut,
-  Flame, Zap, ChevronLeft, Menu
+  Flame, Zap, ChevronLeft, Menu, Bell, Moon, Wallet, BarChart3, Edit
 } from 'lucide-react';
 import { STAGES_CONFIG } from '@/lib/constants';
 import { signOut } from '@/lib/supabase';
@@ -21,6 +21,100 @@ const STAGE_BADGES = [
   { name: 'DeFi Explorer', image: '/images/Badges/defi-explorer.png' },
   { name: 'Liquidity Master', image: '/images/Badges/Liquidez.png' },
 ];
+
+// Config Dropdown
+function ConfigDropdown({ isOpen, onClose, onLogout, onNavigate }: { 
+  isOpen: boolean; 
+  onClose: () => void;
+  onLogout: () => void;
+  onNavigate: (tab: string) => void;
+}) {
+  const [notifications, setNotifications] = useState(true);
+  const [darkMode] = useState(true); // Siempre ON
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      <div className="fixed inset-0 z-40" onClick={onClose} />
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        className="fixed top-14 right-4 md:right-8 w-64 bg-[var(--bg2)] border border-[var(--gray)] rounded-xl shadow-xl z-50 overflow-hidden"
+      >
+        <div className="p-3 border-b border-[var(--gray)]">
+          <p className="font-bold text-sm flex items-center gap-2">
+            <Settings className="w-4 h-4" /> Configuración
+          </p>
+        </div>
+
+        <div className="py-2">
+          <button 
+            onClick={() => { onNavigate('profile'); onClose(); }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg3)] transition-colors"
+          >
+            <Edit className="w-4 h-4 text-[var(--text2)]" />
+            <span className="text-sm">Editar perfil</span>
+          </button>
+
+          <button 
+            className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-[var(--bg3)] transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Bell className="w-4 h-4 text-[var(--text2)]" />
+              <span className="text-sm">Notificaciones</span>
+            </div>
+            <div 
+              onClick={() => setNotifications(!notifications)}
+              className={`w-10 h-6 rounded-full transition-colors ${notifications ? 'bg-orange-500' : 'bg-[var(--gray)]'}`}
+            >
+              <div className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${notifications ? 'translate-x-4' : 'translate-x-0.5'}`} />
+            </div>
+          </button>
+
+          <button 
+            className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-[var(--bg3)] transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Moon className="w-4 h-4 text-[var(--text2)]" />
+              <span className="text-sm">Modo oscuro</span>
+            </div>
+            <div className="w-10 h-6 rounded-full bg-orange-500">
+              <div className="w-5 h-5 rounded-full bg-white shadow-md transform translate-x-4" />
+            </div>
+          </button>
+
+          <button 
+            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg3)] transition-colors"
+          >
+            <Wallet className="w-4 h-4 text-[var(--text2)]" />
+            <span className="text-sm">Conectar wallet</span>
+            <span className="ml-auto text-xs text-[var(--text2)]">→</span>
+          </button>
+
+          <button 
+            onClick={() => { onNavigate('profile'); onClose(); }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--bg3)] transition-colors"
+          >
+            <BarChart3 className="w-4 h-4 text-[var(--text2)]" />
+            <span className="text-sm">Mis estadísticas</span>
+          </button>
+        </div>
+
+        <div className="border-t border-[var(--gray)] py-2">
+          <button 
+            onClick={() => { onLogout(); onClose(); }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-red-400 hover:bg-red-500/10 transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-sm font-medium">Cerrar sesión</span>
+          </button>
+        </div>
+      </motion.div>
+    </>
+  );
+}
 
 // Bottom Navigation para Mobile
 function BottomNav({ activeTab, onTabChange }: { 
@@ -81,12 +175,13 @@ function MobileStats() {
 }
 
 // Sidebar para Desktop (y drawer en mobile)
-function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: { 
+function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose, onConfigClick }: { 
   activeTab: string; 
   onTabChange: (tab: string) => void;
   onLogout: () => void;
   collapsed: boolean;
   onClose: () => void;
+  onConfigClick: () => void;
 }) {
   const menuItems = [
     { id: 'learn', icon: Map, label: 'Aprender' },
@@ -140,21 +235,29 @@ function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: {
           ))}
         </nav>
 
-        {/* Bottom Section */}
+        {/* Bottom Section - User + Logout */}
         <div className="border-t border-[var(--gray)] p-4">
-          {/* Profile Quick Access */}
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg3)] mb-3">
+          {/* User Block */}
+          <button 
+            onClick={() => onTabChange('profile')}
+            className="w-full flex items-center gap-3 p-3 rounded-xl bg-[var(--bg3)] mb-3 hover:bg-[var(--bg3)]/80 transition-colors"
+          >
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center shrink-0">
               👤
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 text-left">
               <p className="font-semibold text-sm truncate">Usuario</p>
-              <p className="text-xs text-[var(--text2)]">Etapa 1</p>
+              <p className="text-xs text-[var(--text2)]">Etapa 1 · 0 pts</p>
             </div>
-            <Settings className="w-4 h-4 text-[var(--text2)]" />
-          </div>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onConfigClick(); }}
+              className="p-1.5 hover:bg-[var(--bg2)] rounded-lg"
+            >
+              <Settings className="w-4 h-4 text-[var(--text2)]" />
+            </button>
+          </button>
 
-          {/* Logout Button - siempre visible */}
+          {/* Logout Button */}
           <button
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
@@ -215,10 +318,13 @@ function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: {
           ))}
         </nav>
 
-        {/* Logout */}
+        {/* Logout al fondo */}
         <div className="p-4 border-t border-[var(--gray)]">
           <button
-            onClick={onLogout}
+            onClick={() => {
+              onLogout();
+              onClose();
+            }}
             className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
           >
             <LogOut className="w-5 h-5 shrink-0" />
@@ -231,7 +337,10 @@ function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: {
 }
 
 // Topbar
-function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
+function Topbar({ onMenuClick, onConfigClick }: { 
+  onMenuClick: () => void;
+  onConfigClick: () => void;
+}) {
   return (
     <header className="fixed top-0 left-0 md:left-56 right-0 md:right-[280px] h-16 bg-[var(--bg)] border-b border-[var(--gray)] z-30 px-4 md:px-6 flex items-center justify-between">
       {/* Left - Menu + Logo */}
@@ -264,15 +373,13 @@ function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
         </div>
       </div>
 
-      {/* Right - Config + Avatar */}
-      <div className="flex items-center gap-2 md:gap-3">
-        <button className="p-2 hover:bg-[var(--bg3)] rounded-lg transition-colors">
-          <Settings className="w-5 h-5 text-[var(--text2)]" />
-        </button>
-        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-base md:text-lg">
-          👤
-        </div>
-      </div>
+      {/* Right - Solo Config */}
+      <button 
+        onClick={onConfigClick}
+        className="p-2 hover:bg-[var(--bg3)] rounded-lg transition-colors"
+      >
+        <Settings className="w-5 h-5 text-[var(--text2)]" />
+      </button>
     </header>
   );
 }
@@ -619,6 +726,7 @@ export default function AppPage() {
   const [activeStage, setActiveStage] = useState(1);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showConfig, setShowConfig] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -638,8 +746,20 @@ export default function AppPage() {
         onLogout={() => setShowLogoutModal(true)}
         collapsed={!sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        onConfigClick={() => setShowConfig(true)}
       />
-      <Topbar onMenuClick={() => setSidebarOpen(true)} />
+      <Topbar 
+        onMenuClick={() => setSidebarOpen(true)}
+        onConfigClick={() => setShowConfig(true)}
+      />
+      
+      {/* Config Dropdown */}
+      <ConfigDropdown 
+        isOpen={showConfig}
+        onClose={() => setShowConfig(false)}
+        onLogout={() => setShowLogoutModal(true)}
+        onNavigate={(tab) => setActiveTab(tab)}
+      />
       
       {/* Bottom Navigation para Mobile */}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
