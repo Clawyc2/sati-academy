@@ -229,26 +229,30 @@ export default function LandingPage() {
       </section>
 
       {/* Timeline Section - Tu Camino Bitcoiner */}
-      <section className="py-20 relative bg-gradient-to-b from-transparent via-orange-950/10 to-transparent">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="py-24 md:py-32 relative bg-gradient-to-b from-transparent via-orange-950/10 to-transparent overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
+            viewport={{ once: true, margin: { once: true, amount: 0.3 }}
+            className="text-center mb-12 md:mb-20"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
               Tu Camino Bitcoiner
             </h2>
-            <p className="text-xl text-gray-400">
+            <p className="text-lg md:text-xl text-gray-400">
               8 etapas progresivas, de cero a DeFi
             </p>
           </motion.div>
 
           {/* Timeline */}
           <div className="relative">
-            {/* Línea vertical central (solo desktop) */}
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 to-amber-500 -translate-x-1/2" />
+            {/* Línea vertical central (solo desktop) - con animated gradient */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 -translate-x-1/2 rounded-full shadow-lg shadow-orange-500/30" 
+              style={{ 
+                background: 'linear-gradient(to bottom, #f7931a, #ff7b00, #f7931a)' 
+              }}
+            />
 
             {/* Etapas */}
             {[
@@ -261,7 +265,7 @@ export default function LandingPage() {
               {
                 id: 2,
                 title: 'Seguridad Primero',
-                lessons: ['¿Qué es la custodia?', 'Self-custody vs exchange', '¿Qué es una frase secreta (seed phrase)?', 'Cómo proteger tu frase secreta', '¿Qué es una hardware wallet?'],
+                lessons: ['¿Qué es la custodia?', 'Self-custody vs exchange', '¿Qué es una frase secreta?', 'Cómo proteger tu frase secreta'],
                 badge: { name: 'Guardián', emoji: '🔐', desc: 'Nadie toca tus sats sin tu permiso', image: '/images/Badges/guardian.png' }
               },
               {
@@ -298,70 +302,106 @@ export default function LandingPage() {
                 id: 8,
                 title: 'Liquidez y DeFi',
                 lessons: ['¿Qué es un pool de liquidez?', '¿Qué son los LP tokens?', 'Proveer liquidez', 'Riesgos — Pérdida Impermanente'],
-                badge: { name: 'Liquidez', emoji: '🏆', desc: 'Dominaste Bitcoin de cero a DeFi', image: '/images/Badges/liquidez.jpg' }
+                badge: { name: 'Liquidez', emoji: '🏆', desc: 'Dominaste Bitcoin de cero a DeFi', image: '/images/Badges/Liquidez.png' }
               }
             ].map((stage, index) => (
               <motion.div
                 key={stage.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative flex items-center mb-12 md:mb-16 ${
+                initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
+                whileInView={{ 
+                  opacity: 1, 
+                  x: 0,
+                  scale: [1, 1.02],
+                }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className={`relative flex items-center mb-16 md:mb-24 ${
                   index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
                 }`}
               >
                 {/* Contenido izquierdo/derecho */}
-                <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
-                  {/* Número + Título */}
-                  <div className={`flex items-center gap-3 mb-4 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
-                    <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center font-bold text-black text-lg shrink-0">
-                      {stage.id}
+                <div className={`w-full md:w-[45%] ${index % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8'}`}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    {/* Número + Título */}
+                    <div className={`flex items-center gap-3 mb-3 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
+                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center font-bold text-black text-xl md:text-2xl shrink-0 shadow-lg shadow-orange-500/50">
+                        {stage.id}
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-bold">{stage.title}</h3>
                     </div>
-                    <h3 className="text-2xl font-bold">{stage.title}</h3>
-                  </div>
 
-                  {/* Temario */}
-                  <ul className={`space-y-2 ${index % 2 === 0 ? 'md:text-right' : ''}`}>
-                    {stage.lessons.map((lesson, i) => (
-                      <li key={i} className={`flex items-center gap-2 text-gray-300 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
-                        <span>{lesson}</span>
-                      </li>
-                    ))}
-                  </ul>
+                    {/* Temario */}
+                    <ul className={`space-y-1.5 ${index % 2 === 0 ? 'md:text-right' : ''}`}>
+                      {stage.lessons.map((lesson, i) => (
+                        <li key={i} className={`flex items-center gap-2 text-sm md:text-base text-gray-300 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                          <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-orange-500/80 shrink-0" />
+                          <span>{lesson}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
                 </div>
 
-                {/* Nodo central (solo desktop) */}
-                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-orange-500 border-4 border-amber-400 z-10" />
+                {/* Nodo central con efecto (solo desktop) */}
+                <motion.div 
+                  className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center z-10"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                >
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 border-4 border-amber-300/50 shadow-xl shadow-orange-500/50" />
+                  <div className="absolute inset-0 rounded-full bg-orange-400 animate-ping opacity-30" />
+                </motion.div>
 
-                {/* Badge */}
-                <div className={`w-full md:w-1/2 mt-6 md:mt-0 ${index % 2 === 0 ? 'md:pl-12' : 'md:pr-12 md:text-right'}`}>
-                  <div className={`bg-gray-800/50 p-6 rounded-2xl border border-gray-700 inline-block ${index % 2 === 0 ? '' : 'md:ml-auto'}`}>
-                    <img 
-                      src={stage.badge.image} 
-                      alt={stage.badge.name}
-                      className="w-20 h-20 object-contain mx-auto mb-3"
-                    />
-                    <h4 className="text-lg font-bold text-orange-400 mb-1">
-                      {stage.badge.emoji} {stage.badge.name}
-                    </h4>
-                    <p className="text-sm text-gray-400">{stage.badge.desc}</p>
-                  </div>
+                {/* Badge con animación */}
+                <div className={`w-full md:w-[45%] mt-6 md:mt-0 ${index % 2 === 0 ? 'md:pl-8' : 'md:pr-8 md:text-right'}`}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    className={`bg-gradient-to-br from-gray-800/80 to-gray-900/80 p-5 md:p-6 rounded-2xl border border-gray-700/50 inline-block backdrop-blur-sm ${
+                      index % 2 === 0 ? '' : 'md:ml-auto'
+                    } shadow-lg shadow-orange-500/10 hover:shadow-orange-500/20 transition-all cursor-pointer`}
+                  >
+                    <div className="flex items-center gap-3 md:gap-4 mb-2">
+                      <img 
+                        src={stage.badge.image} 
+                        alt={stage.badge.name}
+                        className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                      />
+                      <div className={`${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+                        <h4 className="text-base md:text-lg font-bold text-orange-400">
+                          {stage.badge.emoji} {stage.badge.name}
+                        </h4>
+                        <p className="text-xs md:text-sm text-gray-400">{stage.badge.desc}</p>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
               </motion.div>
             ))}
+
+            {/* Línea en móvil (izquierda) */}
+            <div className="md:hidden absolute left-4 md:left-8 top-0 bottom-0 w-0.5 md:w-1 bg-gradient-to-b from-orange-500 via-amber-400 to-amber-500 rounded-full" />
           </div>
 
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-center mt-12"
+            className="text-center mt-8 md:mt-16"
           >
             <button
               onClick={handleStartNow}
-              className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 font-medium transition-colors"
+              className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 font-medium transition-colors text-lg"
             >
               Ver programa completo <ChevronRight className="w-5 h-5" />
             </button>
