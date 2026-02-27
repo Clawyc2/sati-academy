@@ -6,7 +6,6 @@ import {
   BookOpen, Trophy, Users, Bitcoin, Sparkles, Play, ChevronRight
 } from 'lucide-react';
 import AuthModal from '@/components/AuthModal';
-import { STAGES_CONFIG } from '@/lib/constants';
 
 export default function LandingPage() {
   const [showAuth, setShowAuth] = useState(false);
@@ -229,7 +228,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Roadmap Preview Section */}
+      {/* Timeline Section - Tu Camino Bitcoiner */}
       <section className="py-20 relative bg-gradient-to-b from-transparent via-orange-950/10 to-transparent">
         <div className="max-w-6xl mx-auto px-6">
           <motion.div
@@ -246,25 +245,110 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {STAGES_CONFIG.map((stage, i) => (
+          {/* Timeline */}
+          <div className="relative">
+            {/* Línea vertical central (solo desktop) */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 to-amber-500 -translate-x-1/2" />
+
+            {/* Etapas */}
+            {[
+              {
+                id: 1,
+                title: 'Fundamentos',
+                lessons: ['¿Qué es Bitcoin?', '¿Quién es Satoshi Nakamoto?', '¿Por qué Bitcoin y no otra crypto?', '¿Cómo funciona la blockchain?'],
+                badge: { name: 'La Chispa', emoji: '⚡', desc: 'Encendiste tu curiosidad por Bitcoin', image: '/images/Badges/la-chispa.png' }
+              },
+              {
+                id: 2,
+                title: 'Seguridad Primero',
+                lessons: ['¿Qué es la custodia?', 'Self-custody vs exchange', '¿Qué es una frase secreta (seed phrase)?', 'Cómo proteger tu frase secreta', '¿Qué es una hardware wallet?'],
+                badge: { name: 'Guardián', emoji: '🔐', desc: 'Nadie toca tus sats sin tu permiso', image: '/images/Badges/guardian.png' }
+              },
+              {
+                id: 3,
+                title: 'Tu Primera Wallet',
+                lessons: ['Tipos de wallets', 'Crea tu primera wallet', '¿Qué es una dirección Bitcoin?', 'Recibe tus primeros sats'],
+                badge: { name: 'Primer Paso', emoji: '🪙', desc: 'Ya tienes donde guardar tu Bitcoin', image: '/images/Badges/primer-paso.png' }
+              },
+              {
+                id: 4,
+                title: 'Transacciones',
+                lessons: ['¿Qué son las comisiones (fees)?', '¿Qué es el mempool?', 'Envía una transacción', '¿Qué son las confirmaciones?'],
+                badge: { name: 'On-Chain', emoji: '⛓️', desc: 'Tu primera transacción en la blockchain', image: '/images/Badges/onchain.png' }
+              },
+              {
+                id: 5,
+                title: 'Exchanges CEX',
+                lessons: ['¿Qué es un exchange?', 'KYC y registro', 'Fondear tu cuenta', 'Comprar Bitcoin', 'Retirar a tu wallet'],
+                badge: { name: 'CEX', emoji: '📈', desc: 'Compraste y retiraste tus primeros BTC', image: '/images/Badges/cex.png' }
+              },
+              {
+                id: 6,
+                title: 'Lightning Network',
+                lessons: ['¿Qué es Lightning Network?', '¿Cómo funciona un canal?', 'Pagar con Lightning', 'Recibir con Lightning'],
+                badge: { name: 'Lightning Fast', emoji: '⚡', desc: 'Pagos en segundos con Lightning Network', image: '/images/Badges/lightning-fast.png' }
+              },
+              {
+                id: 7,
+                title: 'DEX y Swaps',
+                lessons: ['CEX vs DEX — ¿cuál es la diferencia?', '¿Qué es un swap?', 'Comisiones y slippage', 'Haz tu primer swap'],
+                badge: { name: 'DeFi Explorer', emoji: '🔄', desc: 'Hiciste tu primer swap descentralizado', image: '/images/Badges/defi-explorer.png' }
+              },
+              {
+                id: 8,
+                title: 'Liquidez y DeFi',
+                lessons: ['¿Qué es un pool de liquidez?', '¿Qué son los LP tokens?', 'Proveer liquidez', 'Riesgos — Pérdida Impermanente'],
+                badge: { name: 'Liquidez', emoji: '🏆', desc: 'Dominaste Bitcoin de cero a DeFi', image: '/images/Badges/liquidez.jpg' }
+              }
+            ].map((stage, index) => (
               <motion.div
                 key={stage.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`relative p-4 rounded-xl bg-gradient-to-br ${stage.colorGradient} bg-opacity-20`}
+                transition={{ delay: index * 0.1 }}
+                className={`relative flex items-center mb-12 md:mb-16 ${
+                  index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                }`}
               >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center font-bold text-sm">
-                    {stage.id}
+                {/* Contenido izquierdo/derecho */}
+                <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
+                  {/* Número + Título */}
+                  <div className={`flex items-center gap-3 mb-4 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
+                    <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center font-bold text-black text-lg shrink-0">
+                      {stage.id}
+                    </div>
+                    <h3 className="text-2xl font-bold">{stage.title}</h3>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm truncate">{stage.title}</p>
+
+                  {/* Temario */}
+                  <ul className={`space-y-2 ${index % 2 === 0 ? 'md:text-right' : ''}`}>
+                    {stage.lessons.map((lesson, i) => (
+                      <li key={i} className={`flex items-center gap-2 text-gray-300 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
+                        <span>{lesson}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Nodo central (solo desktop) */}
+                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-orange-500 border-4 border-amber-400 z-10" />
+
+                {/* Badge */}
+                <div className={`w-full md:w-1/2 mt-6 md:mt-0 ${index % 2 === 0 ? 'md:pl-12' : 'md:pr-12 md:text-right'}`}>
+                  <div className={`bg-gray-800/50 p-6 rounded-2xl border border-gray-700 inline-block ${index % 2 === 0 ? '' : 'md:ml-auto'}`}>
+                    <img 
+                      src={stage.badge.image} 
+                      alt={stage.badge.name}
+                      className="w-20 h-20 object-contain mx-auto mb-3"
+                    />
+                    <h4 className="text-lg font-bold text-orange-400 mb-1">
+                      {stage.badge.emoji} {stage.badge.name}
+                    </h4>
+                    <p className="text-sm text-gray-400">{stage.badge.desc}</p>
                   </div>
                 </div>
-                <p className="text-xs text-white/70">{stage.lessons.length - 2} lecciones</p>
               </motion.div>
             ))}
           </div>
