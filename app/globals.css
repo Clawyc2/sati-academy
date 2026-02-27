@@ -272,4 +272,43 @@ body {
   .sidebar-logo-text {
     display: none;
   }
+  
+  /* Mejoras generales móvil */
+  body {
+    font-size: 14px;
+  }
+  
+  /* Hero en móvil */
+  .hero-title {
+    font-size: 2.5rem !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.25rem !important;
+  }
+  
+  /* Features cards en móvil */
+  .feature-card {
+    padding: 16px !important;
+  }
+  
+  /* Modal en móvil */
+  .modal-content {
+    padding: 20px !important;
+    margin: 10px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  /* Stats en móvil */
+  .stats-container {
+    gap: 16px !important;
+  }
+  
+  /* Botones en móvil */
+  .cta-button {
+    width: 100%;
+    padding: 14px 20px !important;
+    font-size: 16px !important;
+  }
 }

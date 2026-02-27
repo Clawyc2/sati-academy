@@ -86,10 +86,10 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <h1 className="font-display text-5xl md:text-7xl font-bold mb-4">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-4">
               <span className="gradient-text">Sati</span> Academy
             </h1>
-            <p className="text-2xl md:text-3xl text-gray-300 mb-2 font-display">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 mb-2 font-display">
               El Duolingo de Bitcoin
             </p>
           </motion.div>
@@ -99,7 +99,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-xl md:text-2xl text-gray-400 mb-12 max-w-2xl mx-auto"
+            className="text-lg md:text-xl lg:text-2xl text-gray-400 mb-8 md:mb-12 max-w-2xl mx-auto px-4"
           >
             Bitcoin para todos. <span className="text-orange-400 font-semibold">Hasta para la abuelita.</span>
           </motion.p>
@@ -109,20 +109,20 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4"
           >
             <button
               onClick={handleStartNow}
-              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-gray-900 rounded-xl font-bold text-lg hover:from-orange-400 hover:to-amber-400 transition-all shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-1 flex items-center justify-center gap-2"
+              className="px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-gray-900 rounded-xl font-bold text-base md:text-lg hover:from-orange-400 hover:to-amber-400 transition-all shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-1 flex items-center justify-center gap-2"
             >
-              <Play className="w-5 h-5" />
+              <Play className="w-4 h-4 md:w-5 md:h-5" />
               Empezar Ahora — Gratis
             </button>
             <a
               href="#como-funciona"
-              className="px-8 py-4 border-2 border-gray-700 text-gray-300 rounded-xl font-medium hover:border-orange-500 hover:text-orange-400 transition-all flex items-center justify-center gap-2"
+              className="px-6 md:px-8 py-3 md:py-4 border-2 border-gray-700 text-gray-300 rounded-xl font-medium hover:border-orange-500 hover:text-orange-400 transition-all flex items-center justify-center gap-2 text-base md:text-base"
             >
-              <BookOpen className="w-5 h-5" />
+              <BookOpen className="w-4 h-4 md:w-5 md:h-5" />
               Ver Cómo Funciona
             </a>
           </motion.div>
@@ -132,7 +132,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex flex-wrap justify-center gap-8 mt-12"
+            className="flex flex-wrap justify-center gap-4 md:gap-8 mt-8 md:mt-12 px-4"
           >
             {[
               { value: '8', label: 'Etapas' },
@@ -140,9 +140,9 @@ export default function LandingPage() {
               { value: '$SATI', label: 'Recompensas' },
               { value: '🇲🇽', label: 'México' },
             ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-3xl md:text-4xl font-bold gradient-text">{stat.value}</div>
-                <div className="text-gray-500 text-sm">{stat.label}</div>
+              <div key={i} className="text-center px-3">
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold gradient-text">{stat.value}</div>
+                <div className="text-gray-500 text-xs md:text-sm">{stat.label}</div>
               </div>
             ))}
           </motion.div>
@@ -156,12 +156,12 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12 md:mb-16 px-4"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 gradient-text">
               ¿Cómo Funciona?
             </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
               Aprende Bitcoin paso a paso, a tu ritmo, con recompensas reales
             </p>
           </motion.div>
@@ -199,25 +199,25 @@ export default function LandingPage() {
                   </div>
                   
                   {/* Contenido */}
-                  <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-14 h-14 rounded-xl ${
+                  <div className="md:w-1/2 p-6 md:p-8 lg:p-12 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 mb-3 md:mb-4">
+                      <div className={`w-10 h-10 md:w-14 md:h-14 rounded-xl ${
                         feature.color === 'orange' ? 'bg-orange-400/20' :
                         feature.color === 'amber' ? 'bg-amber-400/20' :
                         feature.color === 'purple' ? 'bg-purple-400/20' :
                         'bg-cyan-400/20'
                       } flex items-center justify-center`}>
-                        <feature.icon className={`w-7 h-7 ${
+                        <feature.icon className={`w-5 h-5 md:w-7 md:h-7 ${
                           feature.color === 'orange' ? 'text-orange-400' :
                           feature.color === 'amber' ? 'text-amber-400' :
                           feature.color === 'purple' ? 'text-purple-400' :
                           'text-cyan-400'
                         }`} />
                       </div>
-                      <h3 className="text-3xl font-bold">{feature.title}</h3>
+                      <h3 className="text-xl md:text-2xl lg:text-3xl font-bold">{feature.title}</h3>
                     </div>
                     
-                    <p className="text-xl text-gray-300 leading-relaxed">
+                    <p className="text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed">
                       {feature.description}
                     </p>
                   </div>
@@ -235,12 +235,12 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12 md:mb-20"
+            className="text-center mb-12 md:mb-20 px-4"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 gradient-text">
               Tu Camino Bitcoiner
             </h2>
-            <p className="text-lg md:text-xl text-gray-400">
+            <p className="text-base md:text-lg lg:text-xl text-gray-400">
               8 etapas progresivas, de cero a DeFi
             </p>
           </motion.div>

@@ -112,7 +112,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 max-w-md w-full border border-gray-700 shadow-2xl relative"
+          className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-6 md:p-8 max-w-md w-full border border-gray-700 shadow-2xl relative max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close button */}
@@ -125,13 +125,13 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
           {/* Header */}
           <div className="text-center mb-6">
-            <div className="text-5xl mb-4">🪙</div>
-            <h2 className="text-2xl font-bold mb-2">
+            <div className="text-4xl md:text-5xl mb-3">🪙</div>
+            <h2 className="text-xl md:text-2xl font-bold mb-2">
               {mode === 'initial' && '¡Bienvenido a Sati Academy!'}
               {mode === 'login' && 'Inicia Sesión'}
               {mode === 'signup' && 'Crea tu Cuenta'}
             </h2>
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-sm md:text-base">
               {mode === 'initial' && 'Empieza a aprender Bitcoin hoy'}
               {mode === 'login' && 'Continúa tu aprendizaje'}
               {mode === 'signup' && 'Únete a la comunidad'}
@@ -150,7 +150,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           )}
 
           {mode === 'initial' && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* INTERFAZ DE THIRDWEB */}
               <div className="thirdweb-container">
                 <ConnectEmbed
@@ -162,7 +162,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
                 />
               </div>
 
-              <div className="relative flex items-center justify-center my-4">
+              <div className="relative flex items-center justify-center my-3">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-700"></div>
                 </div>
@@ -172,7 +172,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               {/* Email Sign Up */}
               <button
                 onClick={() => setMode('signup')}
-                className="w-full px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-gray-900 rounded-xl font-semibold hover:from-orange-400 hover:to-amber-400 transition-all"
+                className="w-full px-6 py-3 md:py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-gray-900 rounded-xl font-semibold hover:from-orange-400 hover:to-amber-400 transition-all text-sm md:text-base"
               >
                 Registrarse con Email
               </button>
@@ -180,7 +180,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               {/* Already have account */}
               <button
                 onClick={() => setMode('login')}
-                className="w-full px-6 py-4 border-2 border-gray-700 text-gray-300 rounded-xl font-medium hover:border-orange-500 hover:text-orange-400 transition-all"
+                className="w-full px-6 py-3 md:py-4 border-2 border-gray-700 text-gray-300 rounded-xl font-medium hover:border-orange-500 hover:text-orange-400 transition-all text-sm md:text-base"
               >
                 Ya tengo cuenta
               </button>
@@ -188,18 +188,18 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           )}
 
           {(mode === 'login' || mode === 'signup') && (
-            <form onSubmit={handleEmailAuth} className="space-y-4">
+            <form onSubmit={handleEmailAuth} className="space-y-3">
               {mode === 'signup' && (
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">Nombre</label>
+                  <label className="block text-sm text-gray-400 mb-1">Nombre</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <User className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-500" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Tu nombre"
-                      className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-orange-500 focus:outline-none text-white placeholder-gray-500"
+                      className="w-full pl-10 md:pl-12 pr-4 py-2.5 md:py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-orange-500 focus:outline-none text-white placeholder-gray-500 text-sm md:text-base"
                       required
                     />
                   </div>
@@ -207,30 +207,30 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               )}
 
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Email</label>
+                <label className="block text-sm text-gray-400 mb-1">Email</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Mail className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-500" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tu@email.com"
-                    className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-orange-500 focus:outline-none text-white placeholder-gray-500"
+                    className="w-full pl-10 md:pl-12 pr-4 py-2.5 md:py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-orange-500 focus:outline-none text-white placeholder-gray-500 text-sm md:text-base"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Contraseña</label>
+                <label className="block text-sm text-gray-400 mb-1">Contraseña</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Lock className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-500" />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-orange-500 focus:outline-none text-white placeholder-gray-500"
+                    className="w-full pl-10 md:pl-12 pr-4 py-2.5 md:py-3 bg-gray-800 border border-gray-700 rounded-xl focus:border-orange-500 focus:outline-none text-white placeholder-gray-500 text-sm md:text-base"
                     required
                     minLength={6}
                   />
@@ -240,7 +240,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-gray-900 rounded-xl font-semibold hover:from-orange-400 hover:to-amber-400 transition-all disabled:opacity-50"
+                className="w-full px-6 py-3 md:py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-gray-900 rounded-xl font-semibold hover:from-orange-400 hover:to-amber-400 transition-all disabled:opacity-50 text-sm md:text-base"
               >
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin mx-auto" />
