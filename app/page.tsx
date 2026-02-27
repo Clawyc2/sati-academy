@@ -190,11 +190,11 @@ export default function LandingPage() {
                 <div className={`flex flex-col ${index % 2 === 1 ? 'md:flex-row-reverse' : 'md:flex-row'} items-stretch`}>
                   {/* Imagen */}
                   <div className="md:w-1/2 relative">
-                    <div className="aspect-video md:aspect-auto md:h-full bg-gray-800 flex items-center justify-center">
+                    <div className="bg-gray-800 flex items-center justify-center">
                       <img 
                         src={feature.image} 
                         alt={feature.title} 
-                        className="w-full h-full object-cover"
+                        className="w-full h-auto md:h-full object-contain md:object-cover"
                       />
                     </div>
                   </div>
