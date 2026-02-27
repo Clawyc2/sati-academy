@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Map, Trophy, User, X, Star, BookOpen, Gamepad2, 
   FileQuestion, Gift, Lock, CheckCircle, Play, Settings, LogOut,
-  Flame, Zap, ChevronLeft
+  Flame, Zap, ChevronLeft, Menu
 } from 'lucide-react';
 import { STAGES_CONFIG } from '@/lib/constants';
 import { signOut } from '@/lib/supabase';
@@ -23,10 +23,12 @@ const STAGE_BADGES = [
 ];
 
 // Sidebar component
-function Sidebar({ activeTab, onTabChange, onLogout }: { 
+function Sidebar({ activeTab, onTabChange, onLogout, collapsed, onClose }: { 
   activeTab: string; 
   onTabChange: (tab: string) => void;
   onLogout: () => void;
+  collapsed: boolean;
+  onClose: () => void;
 }) {
   const menuItems = [
     { id: 'learn', icon: Map, label: 'Aprender' },
@@ -36,99 +38,136 @@ function Sidebar({ activeTab, onTabChange, onLogout }: {
   ];
 
   return (
-    <aside className="w-[220px] fixed left-0 top-0 h-screen bg-[var(--bg2)] border-r border-[var(--gray)] flex flex-col z-40">
-      {/* Logo */}
-      <div className="p-5 border-b border-[var(--gray)]">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-2xl">
-            🪙
-          </div>
-          <div>
-            <p className="font-bold text-sm" style={{ fontFamily: 'Syne' }}>Sati Academy</p>
-            <p className="text-xs text-[var(--text2)]">Aprende Bitcoin</p>
+    <>
+      {/* Overlay para móvil */}
+      <div 
+        className={`fixed inset-0 bg-black/50 z-30 md:hidden transition-opacity ${
+          collapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+        onClick={onClose}
+      />
+      
+      <aside className={`fixed left-0 top-0 h-screen bg-[var(--bg2)] border-r border-[var(--gray)] flex flex-col z-40 transition-all duration-300 ${
+        collapsed ? '-translate-x-full md:translate-x-0 md:w-20' : 'translate-x-0 w-64'
+      } md:w-64`}>
+        {/* Logo */}
+        <div className="p-4 md:p-5 border-b border-[var(--gray)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-2xl shrink-0">
+                🪙
+              </div>
+              {!collapsed && (
+                <div>
+                  <p className="font-bold text-sm" style={{ fontFamily: 'Syne' }}>Sati Academy</p>
+                  <p className="text-xs text-[var(--text2)]">Aprende Bitcoin</p>
+                </div>
+              )}
+            </div>
+            <button 
+              onClick={onClose}
+              className="md:hidden p-2 hover:bg-[var(--bg3)] rounded-lg"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Menu */}
-      <nav className="flex-1 py-4">
-        {menuItems.map((item) => (
+        {/* Menu */}
+        <nav className="flex-1 py-2 md:py-4">
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => {
+                onTabChange(item.id);
+                onClose();
+              }}
+              className={`w-full flex items-center gap-3 px-4 md:px-5 py-3 transition-all ${
+                activeTab === item.id 
+                  ? 'bg-orange-500/10 border-l-4 border-orange-500 text-orange-400' 
+                  : 'text-[var(--text)] hover:bg-[var(--bg3)]'
+              } ${collapsed ? 'md:justify-center' : ''}`}
+            >
+              <item.icon className="w-5 h-5 shrink-0" />
+              {(!collapsed) && (
+                <span className="text-sm font-medium">{item.label}</span>
+              )}
+            </button>
+          ))}
+        </nav>
+
+        {/* Bottom Section */}
+        <div className="border-t border-[var(--gray)] p-3 md:p-4">
+          {/* Profile Quick Access */}
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg3)] mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center shrink-0">
+              👤
+            </div>
+            {!collapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm truncate">Usuario</p>
+                <p className="text-xs text-[var(--text2)]">Etapa 1</p>
+              </div>
+            )}
+            {!collapsed && <Settings className="w-4 h-4 text-[var(--text2)]" />}
+          </div>
+
+          {/* Logout Button */}
           <button
-            key={item.id}
-            onClick={() => onTabChange(item.id)}
-            className={`w-full flex items-center gap-3 px-5 py-3 transition-all ${
-              activeTab === item.id 
-                ? 'bg-orange-500/10 border-l-4 border-orange-500 text-orange-400' 
-                : 'text-[var(--text)] hover:bg-[var(--bg3)]'
+            onClick={onLogout}
+            className={`w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors ${
+              collapsed ? 'md:justify-center' : ''
             }`}
           >
-            <item.icon className="w-5 h-5" />
-            <span className="text-sm font-medium">{item.label}</span>
+            <LogOut className="w-5 h-5 shrink-0" />
+            {(!collapsed) && <span className="text-sm font-medium">Cerrar sesión</span>}
           </button>
-        ))}
-      </nav>
-
-      {/* Bottom Section */}
-      <div className="border-t border-[var(--gray)] p-4">
-        {/* Profile Quick Access */}
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--bg3)] mb-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center">
-            👤
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm truncate">Usuario</p>
-            <p className="text-xs text-[var(--text2)]">Etapa 1</p>
-          </div>
-          <Settings className="w-4 h-4 text-[var(--text2)]" />
         </div>
-
-        {/* Logout Button */}
-        <button
-          onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="text-sm font-medium">Cerrar sesión</span>
-        </button>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 
 // Topbar component
-function Topbar() {
+function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   return (
-    <header className="fixed top-0 left-[220px] right-[280px] h-16 bg-[var(--bg)] border-b border-[var(--gray)] z-30 px-6 flex items-center justify-between">
-      {/* Left - Logo */}
+    <header className="fixed top-0 left-0 md:left-64 right-0 md:right-[280px] h-16 bg-[var(--bg)] border-b border-[var(--gray)] z-30 px-4 md:px-6 flex items-center justify-between">
+      {/* Left - Menu + Logo */}
       <div className="flex items-center gap-3">
-        <span className="text-2xl">🪙</span>
-        <span className="font-bold text-lg" style={{ fontFamily: 'Syne' }}>Sati Academy</span>
+        <button 
+          onClick={onMenuClick}
+          className="p-2 hover:bg-[var(--bg3)] rounded-lg md:hidden"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+        <span className="text-2xl hidden md:block">🪙</span>
+        <span className="font-bold text-base md:text-lg hidden md:block" style={{ fontFamily: 'Syne' }}>Sati Academy</span>
       </div>
       
-      {/* Center - Stats */}
-      <div className="flex items-center gap-6">
+      {/* Center - Stats (ocultos en móvil) */}
+      <div className="hidden md:flex items-center gap-6">
         <div className="flex items-center gap-2">
           <span className="text-orange-400">🔥</span>
-          <span className="font-semibold">Racha: <span className="text-orange-400">0</span> días</span>
+          <span className="font-semibold text-sm">Racha: <span className="text-orange-400">0</span> días</span>
         </div>
         <div className="w-px h-6 bg-[var(--gray)]" />
         <div className="flex items-center gap-2">
           <span className="text-cyan-400">💎</span>
-          <span className="font-semibold">Puntos: <span className="text-cyan-400">0</span></span>
+          <span className="font-semibold text-sm">Puntos: <span className="text-cyan-400">0</span></span>
         </div>
         <div className="w-px h-6 bg-[var(--gray)]" />
         <div className="flex items-center gap-2">
           <span className="text-amber-400">⚡</span>
-          <span className="font-semibold">Etapa <span className="text-amber-400">1</span></span>
+          <span className="font-semibold text-sm">Etapa <span className="text-amber-400">1</span></span>
         </div>
       </div>
 
       {/* Right - Config + Avatar */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3">
         <button className="p-2 hover:bg-[var(--bg3)] rounded-lg transition-colors">
           <Settings className="w-5 h-5 text-[var(--text2)]" />
         </button>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-lg">
+        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center text-base md:text-lg">
           👤
         </div>
       </div>
@@ -146,7 +185,7 @@ function RightPanel() {
   ];
 
   return (
-    <aside className="w-[280px] fixed right-0 top-16 bottom-0 bg-[var(--bg2)] border-l border-[var(--gray)] overflow-y-auto p-4 space-y-4">
+    <aside className="hidden md:block w-[280px] fixed right-0 top-16 bottom-0 bg-[var(--bg2)] border-l border-[var(--gray)] overflow-y-auto p-4 space-y-4">
       {/* Widget 1 - Token SATI */}
       <div className="bg-[var(--bg3)] rounded-xl p-4 border border-[var(--gray)]">
         <div className="flex items-center gap-2 mb-2">
@@ -525,6 +564,7 @@ export default function AppPage() {
   const [activeTab, setActiveTab] = useState('learn');
   const [activeStage, setActiveStage] = useState(1);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -542,23 +582,25 @@ export default function AppPage() {
         activeTab={activeTab} 
         onTabChange={setActiveTab}
         onLogout={() => setShowLogoutModal(true)}
+        collapsed={!sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
-      <Topbar />
+      <Topbar onMenuClick={() => setSidebarOpen(true)} />
       
       {activeTab === 'learn' && (
         <>
           <StageTabs activeStage={activeStage} onStageChange={setActiveStage} />
           <RightPanel />
-          <main className="ml-[220px] mr-[280px] min-h-screen">
+          <main className="ml-0 md:ml-64 mr-0 md:mr-[280px] min-h-screen pt-16 md:pt-16">
             <LevelMap activeStage={activeStage} />
           </main>
         </>
       )}
 
       {activeTab !== 'learn' && (
-        <main className="ml-[220px] min-h-screen pt-20">
+        <main className="ml-0 md:ml-64 min-h-screen pt-20">
           <div className="flex items-center justify-center h-[60vh]">
-            <div className="text-center">
+            <div className="text-center px-4">
               <div className="text-6xl mb-4">🚧</div>
               <h2 className="text-2xl font-bold mb-2">En construcción</h2>
               <p className="text-[var(--text2)]">Esta sección estará disponible pronto</p>
