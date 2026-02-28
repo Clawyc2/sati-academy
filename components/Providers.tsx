@@ -1,11 +1,14 @@
 'use client';
 
 import { ThirdwebProvider } from "thirdweb/react";
+import ErrorBoundary from "./ErrorBoundary";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThirdwebProvider>
-      {children}
-    </ThirdwebProvider>
+    <ErrorBoundary>
+      <ThirdwebProvider>
+        {children}
+      </ThirdwebProvider>
+    </ErrorBoundary>
   );
 }

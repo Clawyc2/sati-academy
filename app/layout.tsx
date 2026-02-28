@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: 'Aprende Bitcoin de cero, al estilo Duolingo — con niveles, lecciones cortas, simuladores prácticos y recompensas en sats. Bitcoin para todos. Hasta para la abuelita.',
   keywords: 'Bitcoin, educación, Duolingo, México, crypto, blockchain, learning, academy, sats',
   authors: [{ name: 'Sati Academy' }],
+  
+  // SEO
   openGraph: {
     title: 'Sati Academy - El Duolingo de Bitcoin',
     description: 'Aprende Bitcoin de cero, al estilo Duolingo. Bitcoin para todos. Hasta para la abuelita.',
@@ -18,6 +20,14 @@ export const metadata: Metadata = {
     title: 'Sati Academy - El Duolingo de Bitcoin',
     description: 'Aprende Bitcoin de cero, al estilo Duolingo',
   },
+  
+  // Seguridad
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+  },
+  referrer: 'strict-origin-when-cross-origin',
 }
 
 export default function RootLayout({
