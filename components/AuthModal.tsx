@@ -36,19 +36,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
   const handleThirdwebAuth = async (walletAddress: string) => {
     try {
-      // Crear/actualizar usuario en Supabase
-      const { data, error } = await supabase
-        .from('sati_users')
-        .upsert({
-          thirdweb_account_id: walletAddress,
-          provider: 'thirdweb',
-          last_active_at: new Date().toISOString()
-        }, { onConflict: 'thirdweb_account_id' })
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      // TODO: Cuando las tablas estén creadas, guardar en Supabase
+      // Por ahora solo notificar éxito
+      console.log('✅ Wallet conectada:', walletAddress);
+      
       setSuccess('¡Bienvenido a Sati Academy!');
       setTimeout(() => onSuccess(), 1000);
     } catch (err: any) {
@@ -100,16 +91,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         if (signUpError) throw signUpError;
         result = data;
         
-        // Crear perfil en sati_users
-        if (result.user) {
-          await supabase.from('sati_users').insert({
-            id: result.user.id,
-            email: email,
-            name: name,
-            provider: 'email',
-            provider_user_id: result.user.id
-          });
-        }
+        // TODO: Crear perfil en sati_users cuando la tabla exista
+        // Se creará automáticamente con el trigger en Supabase
         
       } else {
         // Login con Supabase Auth
@@ -121,12 +104,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         if (signInError) throw signInError;
         result = data;
         
-        // Actualizar last_active_at
-        if (result.user) {
-          await supabase.from('sati_users')
-            .update({ last_active_at: new Date().toISOString() })
-            .eq('id', result.user.id);
-        }
+        // TODO: Actualizar last_active_at cuando la tabla exista
+        // if (result.user) {
+        //   await supabase.from('sati_users')
+        //     .update({ last_active_at: new Date().toISOString() })
+        //     .eq('id', result.user.id);
+        // }
       }
       
       setSuccess('¡Bienvenido a Sati Academy!');
